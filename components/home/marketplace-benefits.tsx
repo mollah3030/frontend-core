@@ -25,7 +25,7 @@ const BENEFITS = [
   {
     icon: ArrowCounterClockwiseIcon,
     title: "14-Day Statutory Returns",
-    description: "Standard 14-day statutory return rights on eligible items for total peace of mind.",
+    description: "Standard statutory return rights on eligible items for total peace of mind.",
   },
 ];
 
@@ -44,19 +44,19 @@ export function MarketplaceBenefits() {
           Marketplace Trust and Customer Principles
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
           {BENEFITS.map((b) => {
             const Icon = b.icon;
             return (
               <div
                 key={b.title}
-                className="flex items-start gap-3.5 p-4 bg-card border border-border/60"
+                className="flex items-start gap-3.5 p-4 rounded-md bg-card border border-border/70 shadow-2xs hover:border-primary/40 transition-colors"
               >
-                <div className="flex size-10 shrink-0 items-center justify-center rounded bg-brand-pale-sage text-brand-deep-forest dark:bg-muted dark:text-foreground">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-pale-sage text-brand-deep-forest dark:bg-muted dark:text-foreground">
                   <Icon className="size-5" aria-hidden="true" />
                 </div>
                 <div>
-                  <h3 className="text-xs sm:text-sm font-semibold text-foreground">
+                  <h3 className="text-xs sm:text-sm font-bold text-foreground">
                     {b.title}
                   </h3>
                   <p className="text-[11px] sm:text-xs text-muted-foreground mt-1 leading-relaxed">

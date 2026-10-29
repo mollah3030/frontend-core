@@ -1,4 +1,5 @@
 import { productsApi } from "@/resources/apis/products.api";
+import { storesApi } from "@/resources/apis/stores.api";
 import type { Store, StoreStatus } from "@/resources/interfaces/store.interface";
 import type { Product } from "@/resources/interfaces/product.interface";
 import {
@@ -169,7 +170,17 @@ export async function resolveStoreBySlugOrId(
   const normalized = slugOrId.trim();
   if (!normalized) return null;
 
-  // 1. Direct UUID lookup in backend products to retrieve real store entity
+  // 1. Direct call to live backend /marketplace/stores/:id endpoint
+  try {
+    const liveStore = await storesApi.getStore(normalized);
+    if (liveStore) {
+      return liveStore;
+    }
+  } catch {
+    // Continue to next check
+  }
+
+  // 2. Direct UUID lookup in backend products to retrieve real store entity
   if (UUID_REGEX.test(normalized)) {
     try {
       const res = await productsApi.getMarketplace({

@@ -15,7 +15,7 @@ export interface SearchBarProps {
 }
 
 function SearchBarFallback({
-  placeholder = "Search products, gifts and makers...",
+  placeholder = "Search for handcrafted ceramics, linen, jewelry, and gifts...",
   className,
   size = "default",
 }: {
@@ -24,14 +24,14 @@ function SearchBarFallback({
   size?: "default" | "sm" | "lg";
 }) {
   const sizeClasses = {
-    sm: "h-8 text-xs",
-    default: "h-9 text-xs sm:text-sm",
-    lg: "h-10 text-sm",
+    sm: "h-9 text-xs",
+    default: "h-10 text-xs sm:text-sm",
+    lg: "h-11 text-sm",
   }[size];
 
   return (
     <div className={cn("relative flex w-full items-center", className)}>
-      <div className="pointer-events-none absolute left-3 flex items-center justify-center text-muted-foreground">
+      <div className="pointer-events-none absolute left-3.5 flex items-center justify-center text-muted-foreground">
         <MagnifyingGlassIcon className="size-4" aria-hidden="true" />
       </div>
       <input
@@ -40,7 +40,7 @@ function SearchBarFallback({
         placeholder={placeholder}
         aria-hidden="true"
         className={cn(
-          "w-full rounded-none border border-input bg-card pl-9 pr-14 text-foreground placeholder:text-muted-foreground outline-none opacity-80",
+          "w-full rounded-full border border-input bg-card pl-10 pr-12 text-foreground placeholder:text-muted-foreground outline-none opacity-80 shadow-2xs",
           sizeClasses
         )}
       />
@@ -49,7 +49,7 @@ function SearchBarFallback({
 }
 
 function SearchBarForm({
-  placeholder = "Search products, gifts and makers...",
+  placeholder = "Search for handcrafted ceramics, linen, jewelry, and gifts...",
   className,
   autoFocus = false,
   onSearchSubmit,
@@ -93,9 +93,15 @@ function SearchBarForm({
   };
 
   const sizeClasses = {
-    sm: "h-8 text-xs",
-    default: "h-9 text-xs sm:text-sm",
-    lg: "h-10 text-sm",
+    sm: "h-9 text-xs pl-9 pr-16",
+    default: "h-10 text-xs sm:text-sm pl-10 pr-20",
+    lg: "h-11 text-sm pl-11 pr-24",
+  }[size];
+
+  const buttonSizeClasses = {
+    sm: "size-7 right-1",
+    default: "h-8 px-3.5 right-1 text-xs",
+    lg: "h-9 px-4 right-1 text-xs",
   }[size];
 
   return (
@@ -111,11 +117,11 @@ function SearchBarForm({
 
       <div className="relative flex w-full items-center">
         {/* Search Icon Prefix */}
-        <div className="pointer-events-none absolute left-3 flex items-center justify-center text-muted-foreground">
+        <div className="pointer-events-none absolute left-3.5 flex items-center justify-center text-muted-foreground">
           <MagnifyingGlassIcon className="size-4" aria-hidden="true" />
         </div>
 
-        {/* Input */}
+        {/* Search Input */}
         <input
           ref={inputRef}
           id={id}
@@ -129,8 +135,8 @@ function SearchBarForm({
           autoCorrect="off"
           spellCheck="false"
           className={cn(
-            "w-full rounded-none border border-input bg-card pl-9 pr-14 text-foreground placeholder:text-muted-foreground transition-all duration-150 outline-none",
-            "focus:border-ring focus:ring-1 focus:ring-ring/50",
+            "w-full rounded-full border border-border bg-card text-foreground placeholder:text-muted-foreground transition-all duration-150 outline-none shadow-2xs",
+            "focus:border-primary focus:ring-2 focus:ring-primary/20",
             sizeClasses
           )}
         />
@@ -141,19 +147,24 @@ function SearchBarForm({
             type="button"
             onClick={handleClear}
             aria-label="Clear search"
-            className="absolute right-9 p-1 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            className="absolute right-14 sm:right-16 p-1 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
           >
             <XIcon className="size-3.5" aria-hidden="true" />
           </button>
         )}
 
-        {/* Submit Icon Button */}
+        {/* Etsy-Style Search Action Button */}
         <button
           type="submit"
           aria-label="Submit search"
-          className="absolute right-1 flex size-7 items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/80 rounded transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          className={cn(
+            "absolute flex items-center justify-center rounded-full font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            "bg-primary text-primary-foreground hover:bg-primary/90",
+            buttonSizeClasses
+          )}
         >
-          <MagnifyingGlassIcon className="size-3.5" aria-hidden="true" />
+          <MagnifyingGlassIcon className="size-3.5 sm:mr-1" weight="bold" aria-hidden="true" />
+          <span className="hidden sm:inline">Search</span>
         </button>
       </div>
     </form>

@@ -14,3 +14,4 @@ export * from './orders.api';
 export * from './payments.api';
 export * from './seller-auth.api';
 export * from './seller-dashboard.api';
+export * from './newsletter.api';

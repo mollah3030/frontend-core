@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { HeartIcon, ShoppingBagIcon, MagnifyingGlassIcon } from "@phosphor-icons/react";
+import { HeartIcon, ShoppingBagIcon, MagnifyingGlassIcon, StorefrontIcon } from "@phosphor-icons/react";
 import { AnnouncementBar } from "./announcement-bar";
 import { SearchBar } from "./search-bar";
 import { CategoryNavigation } from "./category-navigation";
@@ -27,8 +27,8 @@ export interface SiteHeaderProps {
 }
 
 /**
- * Global marketplace header incorporating announcement bar,
- * brand wordmark, prominent search, customer actions, and category navigation.
+ * Global marketplace header incorporating Etsy-inspired announcement bar,
+ * brand wordmark, prominent search, creator onboarding link, and customer actions.
  */
 export function SiteHeader({
   user,
@@ -50,15 +50,15 @@ export function SiteHeader({
 
   return (
     <header className={cn("relative w-full z-40 bg-background", className)}>
-      {/* 1. Optional Announcement Bar */}
+      {/* 1. Slim Promotional Announcement Bar */}
       {showAnnouncement && (
         <AnnouncementBar message={announcementMessage} />
       )}
 
-      {/* 2. Main Header Bar */}
-      <div className="sticky top-0 z-40 w-full border-b border-border/80 bg-background/95 backdrop-blur-xs">
+      {/* 2. Main Sticky Header Bar */}
+      <div className="sticky top-0 z-40 w-full border-b border-border/80 bg-background/95 backdrop-blur-md transition-shadow">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between gap-3 sm:gap-6">
+          <div className="flex h-16 sm:h-18 items-center justify-between gap-3 sm:gap-6">
             {/* Mobile Menu Trigger & Wordmark */}
             <div className="flex items-center gap-2 sm:gap-3">
               <MobileNavigation
@@ -68,48 +68,59 @@ export function SiteHeader({
 
               <Link
                 href={HEADER_NAV_CONFIG.routes.home}
-                className="group flex flex-col justify-center focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                className="group flex flex-col justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xs"
                 aria-label="Nordic Marketplace Home"
               >
-                <span className="font-heading text-lg sm:text-xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
-                  Nordic<span className="text-primary font-light">.</span>Market
-                </span>
-                <span className="hidden sm:inline-block text-[9px] uppercase tracking-widest text-muted-foreground font-medium -mt-1">
+                <div className="flex items-baseline gap-1">
+                  <span className="font-heading text-xl sm:text-2xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
+                    Nordic<span className="text-primary font-light">.</span>Market
+                  </span>
+                </div>
+                <span className="hidden sm:inline-block text-[9px] uppercase tracking-widest text-muted-foreground font-semibold -mt-1">
                   Finnish Multi-Vendor
                 </span>
               </Link>
             </div>
 
-            {/* Desktop Prominent Search */}
-            <div className="hidden lg:flex flex-1 max-w-xl mx-4">
+            {/* Prominent Center Search Bar (Desktop) */}
+            <div className="hidden lg:flex flex-1 max-w-2xl mx-4">
               <SearchBar placeholder={HEADER_NAV_CONFIG.searchPlaceholder} />
             </div>
 
-            {/* Actions (Search Toggle, Account, Wishlist, Cart) */}
+            {/* Actions (Sell Link, Account, Wishlist, Cart) */}
             <div className="flex items-center gap-1 sm:gap-2">
+              {/* Creator Onboarding / "Sell on Nordic" (Etsy-inspired) */}
+              <Link
+                href={HEADER_NAV_CONFIG.routes.sell}
+                className="hidden xl:inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-full hover:bg-muted/80"
+              >
+                <StorefrontIcon className="size-4 text-primary" aria-hidden="true" />
+                <span>Sell on Nordic</span>
+              </Link>
+
               {/* Mobile Search Toggle */}
               <Button
                 variant="ghost"
                 size="icon-sm"
                 onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-                className="lg:hidden text-foreground hover:bg-muted"
+                className="lg:hidden text-foreground hover:bg-muted rounded-full"
                 aria-label={mobileSearchOpen ? "Close search" : "Open search"}
                 aria-expanded={mobileSearchOpen}
               >
                 <MagnifyingGlassIcon className="size-4" aria-hidden="true" />
               </Button>
 
-              {/* Account Menu */}
+              {/* Customer Account Menu */}
               <div className="hidden sm:block">
                 <AccountMenu user={currentUser} />
               </div>
 
-              {/* Wishlist Link */}
+              {/* Favorites / Wishlist Link */}
               <Button
                 variant="ghost"
                 size="icon-sm"
                 asChild
-                className="relative text-foreground hover:bg-muted"
+                className="relative text-foreground hover:bg-muted rounded-full"
               >
                 <Link
                   href={HEADER_NAV_CONFIG.routes.wishlist}
@@ -123,7 +134,7 @@ export function SiteHeader({
                   {typeof currentWishlistCount === "number" && currentWishlistCount > 0 && (
                     <Badge
                       variant="secondary"
-                      className="absolute -top-1 -right-1 h-4 min-w-4 px-1 rounded-full text-[10px] font-semibold bg-muted text-foreground border border-border"
+                      className="absolute -top-1 -right-1 h-4 min-w-4 px-1 rounded-full text-[10px] font-bold bg-primary text-primary-foreground border-none"
                     >
                       {currentWishlistCount}
                     </Badge>
@@ -131,12 +142,12 @@ export function SiteHeader({
                 </Link>
               </Button>
 
-              {/* Cart Link */}
+              {/* Shopping Cart Link */}
               <Button
                 variant="ghost"
                 size="sm"
                 asChild
-                className="relative px-2.5 text-foreground hover:bg-muted"
+                className="relative px-2.5 sm:px-3 text-foreground hover:bg-muted rounded-full"
               >
                 <Link
                   href={HEADER_NAV_CONFIG.routes.cart}
@@ -146,14 +157,14 @@ export function SiteHeader({
                       : "Shopping Cart"
                   }
                 >
-                  <ShoppingBagIcon className="size-4.5 text-primary" aria-hidden="true" />
-                  <span className="hidden md:inline-block ml-1.5 text-xs font-medium">
+                  <ShoppingBagIcon className="size-4.5 text-primary" weight="bold" aria-hidden="true" />
+                  <span className="hidden md:inline-block ml-1.5 text-xs font-semibold">
                     Cart
                   </span>
                   {typeof currentCartCount === "number" && currentCartCount > 0 && (
                     <Badge
                       variant="default"
-                      className="ml-1 sm:ml-1.5 h-4 min-w-4 px-1 rounded-full text-[10px] font-semibold bg-primary text-primary-foreground"
+                      className="ml-1 sm:ml-1.5 h-4 min-w-4 px-1 rounded-full text-[10px] font-bold bg-primary text-primary-foreground"
                     >
                       {currentCartCount}
                     </Badge>
@@ -178,7 +189,7 @@ export function SiteHeader({
         </div>
 
         {/* 3. Category Navigation Bar (Desktop) */}
-        <div className="hidden lg:block">
+        <div className="hidden lg:block border-t border-border/50">
           <CategoryNavigation />
         </div>
       </div>

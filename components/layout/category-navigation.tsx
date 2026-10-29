@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { PROVISIONAL_CATEGORIES, type NavCategory } from "@/config/navigation";
+import { categoriesApi } from "@/resources/apis/categories.api";
 
 export interface CategoryNavigationProps {
   categories?: NavCategory[];
@@ -12,21 +13,59 @@ export interface CategoryNavigationProps {
 }
 
 function CategoryNavigationList({
-  categories = PROVISIONAL_CATEGORIES,
+  categories: initialCategories,
   className,
 }: CategoryNavigationProps) {
   const pathname = usePathname();
+  const [categories, setCategories] = React.useState<NavCategory[]>(
+    initialCategories || []
+  );
+
+  React.useEffect(() => {
+    if (initialCategories && initialCategories.length > 0) {
+      setCategories(initialCategories);
+      return;
+    }
+
+    let isMounted = true;
+    categoriesApi
+      .getCategories("ACTIVE")
+      .then((data) => {
+        if (isMounted && Array.isArray(data) && data.length > 0) {
+          setCategories(
+            data.map((c) => ({
+              title: c.name,
+              titleEn: c.name,
+              slug: c.slug,
+              href: `/categories/${c.slug || c.id}`,
+              description: c.description || undefined,
+            }))
+          );
+        } else if (isMounted && (!initialCategories || initialCategories.length === 0)) {
+          setCategories(PROVISIONAL_CATEGORIES);
+        }
+      })
+      .catch(() => {
+        if (isMounted && (!initialCategories || initialCategories.length === 0)) {
+          setCategories(PROVISIONAL_CATEGORIES);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [initialCategories]);
 
   return (
     <nav
-      aria-label="Main categories"
+      aria-label="Marketplace categories"
       className={cn(
-        "w-full border-b border-border/70 bg-card/60 backdrop-blur-xs",
+        "w-full bg-background/95 backdrop-blur-xs",
         className
       )}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <ul className="flex items-center gap-1 sm:gap-2 overflow-x-auto py-2 scrollbar-none text-xs font-medium">
+        <ul className="flex items-center justify-start gap-3 sm:gap-6 overflow-x-auto py-2.5 scrollbar-none text-xs font-medium">
           {categories.map((cat) => {
             const isActive = pathname === cat.href;
 
@@ -35,12 +74,18 @@ function CategoryNavigationList({
                 <Link
                   href={cat.href}
                   className={cn(
-                    "inline-flex items-center px-2.5 py-1 text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring rounded-none whitespace-nowrap",
+                    "relative inline-flex items-center px-3 py-1.5 text-muted-foreground transition-all duration-150 hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring rounded-full hover:bg-muted/60 whitespace-nowrap",
                     isActive &&
-                      "text-primary font-semibold bg-brand-pale-sage/50 dark:bg-muted/80 border-b-2 border-primary"
+                      "text-foreground font-semibold bg-brand-pale-sage/60 dark:bg-muted/80 shadow-2xs"
                   )}
                 >
-                  {cat.title}
+                  <span>{cat.title}</span>
+                  {isActive && (
+                    <span
+                      className="absolute bottom-0 left-3 right-3 h-0.5 bg-primary rounded-full"
+                      aria-hidden="true"
+                    />
+                  )}
                 </Link>
               </li>
             );
@@ -57,19 +102,16 @@ function CategoryNavigationFallback({
 }: CategoryNavigationProps) {
   return (
     <nav
-      aria-label="Main categories"
-      className={cn(
-        "w-full border-b border-border/70 bg-card/60 backdrop-blur-xs",
-        className
-      )}
+      aria-label="Marketplace categories"
+      className={cn("w-full bg-background/95 backdrop-blur-xs", className)}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <ul className="flex items-center gap-1 sm:gap-2 overflow-x-auto py-2 scrollbar-none text-xs font-medium">
+        <ul className="flex items-center justify-between gap-1 sm:gap-2 overflow-x-auto py-2.5 scrollbar-none text-xs font-medium">
           {categories.map((cat) => (
             <li key={cat.slug} className="shrink-0">
               <Link
                 href={cat.href}
-                className="inline-flex items-center px-2.5 py-1 text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring rounded-none whitespace-nowrap"
+                className="inline-flex items-center px-3 py-1.5 text-muted-foreground transition-all duration-150 hover:text-foreground rounded-full whitespace-nowrap"
               >
                 {cat.title}
               </Link>

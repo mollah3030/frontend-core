@@ -1,21 +1,20 @@
 import * as React from "react";
 import Link from "next/link";
-import { ArrowRightIcon, BookOpenIcon } from "@phosphor-icons/react/dist/ssr";
+import { ArrowRightIcon, BookOpenIcon, StorefrontIcon } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@/components/ui/button";
 
 /**
  * Editorial Craft Story Highlight Section.
- * Replaces fake newsletter forms with an authentic story invitation
- * highlighting Scandinavian craft philosophy and small studio values.
+ * Highlights Scandinavian craft philosophy, slow living, and community values.
  */
 export function StoryHighlight() {
   return (
     <section
       aria-labelledby="story-heading"
-      className="py-14 sm:py-20 bg-brand-pale-sage/40 dark:bg-muted/30 border-b border-border/70"
+      className="py-16 sm:py-24 bg-brand-warm-ivory dark:bg-card/40 border-b border-border/70"
     >
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-brand-deep-forest dark:text-foreground bg-brand-pale-sage dark:bg-muted mb-4">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary bg-brand-pale-sage/80 dark:bg-muted mb-4 rounded-full">
           <BookOpenIcon className="size-3.5" aria-hidden="true" />
           <span>Our Philosophy</span>
         </div>
@@ -24,17 +23,17 @@ export function StoryHighlight() {
           id="story-heading"
           className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-foreground max-w-2xl mx-auto leading-tight"
         >
-          A home for Nordic craft and mindful design.
+          A home for mindful Nordic craft and independent studios.
         </h2>
 
         <p className="text-xs sm:text-sm text-muted-foreground mt-4 max-w-xl mx-auto leading-relaxed">
           We believe the most meaningful objects are made slowly and intentionally. 
-          Our platform brings together skilled woodworkers, ceramicists, textile artists, 
-          and jewelry makers under one shared community.
+          Our platform connects discerning shoppers directly with skilled woodworkers, ceramicists, 
+          textile weavers, and silversmiths across Finland and the Nordic region.
         </p>
 
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <Button asChild size="default" className="px-6 h-10 text-xs sm:text-sm font-medium">
+          <Button asChild size="default" className="px-6 h-11 rounded-full text-xs sm:text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90">
             <Link href="/about">
               <span>Read our story</span>
               <ArrowRightIcon className="size-3.5 ml-1.5" aria-hidden="true" />
@@ -45,9 +44,10 @@ export function StoryHighlight() {
             asChild
             variant="outline"
             size="default"
-            className="px-6 h-10 text-xs sm:text-sm font-medium border-border hover:bg-muted"
+            className="px-6 h-11 rounded-full text-xs sm:text-sm font-semibold border-border hover:bg-muted"
           >
-            <Link href="/sell">
+            <Link href="/seller/signup">
+              <StorefrontIcon className="size-4 mr-1.5 text-primary" aria-hidden="true" />
               <span>Sell on Nordic Market</span>
             </Link>
           </Button>
