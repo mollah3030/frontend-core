@@ -50,7 +50,75 @@ export interface SellerSignupPayload {
   sellerAgreementAccepted: boolean;
 }
 
+export interface BusinessVerificationResult {
+  valid: boolean;
+  businessId: string;
+  companyName?: string;
+  companyForm?: string | null;
+  registrationDate?: string | null;
+  tradeRegisterStatus?: string | null;
+  street?: string | null;
+  postCode?: string | null;
+  city?: string | null;
+  fullAddress?: string | null;
+  message?: string;
+}
+
 export const sellerAuthApi = {
+  /**
+   * Verify Finnish Business ID (Y-tunnus) with PRH / YTJ Open Data API
+   */
+  async verifyBusinessId(businessId: string): Promise<BusinessVerificationResult> {
+    const cleanId = businessId.trim();
+    const prhPublicBase = process.env.NEXT_PUBLIC_PRH_YTJ_API_URL || 'https://avoindata.prh.fi/opendata-ytj-api/v3';
+
+    try {
+      // First attempt via backend verification service
+      return await apiClient<BusinessVerificationResult>(
+        `/store-auth/verify-business-id?businessId=${encodeURIComponent(cleanId)}`,
+        { method: 'GET' }
+      );
+    } catch {
+      // Fallback: Direct query to PRH Open Data API if backend proxy is unavailable
+      try {
+        let formatted = cleanId.replace(/\s+/g, '');
+        if (/^\d{8}$/.test(formatted)) {
+          formatted = `${formatted.slice(0, 7)}-${formatted.slice(7)}`;
+        }
+        const res = await fetch(`${prhPublicBase.replace(/\/+$/, '')}/companies?businessId=${encodeURIComponent(formatted)}`);
+        if (!res.ok) {
+          return { valid: false, businessId: formatted, message: `PRH registry responded with HTTP ${res.status}` };
+        }
+        const data = await res.json();
+        const companies = data?.companies || [];
+        if (!companies.length || data?.totalResults === 0) {
+          return { valid: false, businessId: formatted, message: 'Business ID (Y-tunnus) not found in the Finnish Trade Register (PRH / YTJ).' };
+        }
+        const comp = companies[0];
+        const primaryAddress = comp?.addresses?.[0] || null;
+        const postOffice = primaryAddress?.postOffices?.[0]?.city || null;
+        const street = primaryAddress?.street ? `${primaryAddress.street} ${primaryAddress.buildingNumber || ''}`.trim() : null;
+        const postCode = primaryAddress?.postCode || null;
+
+        return {
+          valid: true,
+          businessId: comp?.businessId?.value || formatted,
+          companyName: comp?.names?.[0]?.name || comp?.name || 'Registered Finnish Entity',
+          companyForm: comp?.companyForms?.[0]?.name || null,
+          registrationDate: comp?.registrationDate || comp?.businessId?.registrationDate || null,
+          tradeRegisterStatus: comp?.tradeRegisterStatus === '1' ? 'Registered' : 'Active',
+          street,
+          postCode,
+          city: postOffice,
+          fullAddress: [street, postCode, postOffice, 'Finland'].filter(Boolean).join(', '),
+        };
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : 'Registry lookup error';
+        return { valid: false, businessId: cleanId, message: `Could not reach PRH / YTJ registry: ${msg}` };
+      }
+    }
+  },
+
   /**
    * Seller / Store Admin Login
    */

@@ -1,4 +1,5 @@
 import { apiClient } from './client';
+import { sellerAuthApi, type BusinessVerificationResult } from './seller-auth.api';
 import type {
   StoreSalesSummary,
   StoreSalesAnalyticsItem,
@@ -215,5 +216,11 @@ export const sellerDashboardApi = {
       headers: getSellerAuthHeaders(storeId),
       body: JSON.stringify(payload),
     });
+  },
+
+  // ── 6. Finnish PRH / YTJ Verification ───────────────────────────────────
+
+  async verifyBusinessId(businessId: string): Promise<BusinessVerificationResult> {
+    return sellerAuthApi.verifyBusinessId(businessId);
   },
 };

@@ -174,6 +174,8 @@ export interface StoreOrderItemDetail {
   grandTotal: number;
   trackingNumber?: string;
   trackingCarrier?: string;
+  carrier?: string;
+  trackingUrl?: string;
   fulfillmentNotes?: string;
   createdAt: string;
   updatedAt: string;
@@ -198,6 +200,8 @@ export interface UpdateStoreOrderStatusPayload {
   status: StoreOrderStatusType;
   notes?: string;
   trackingNumber?: string;
+  carrier?: string;
+  trackingUrl?: string;
 }
 
 export interface StoreProfileData {

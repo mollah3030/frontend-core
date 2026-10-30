@@ -20,8 +20,11 @@ import {
   CheckCircleIcon,
   WarningCircleIcon,
   SparkleIcon,
-  ClockIcon,
-} from "@phosphor-icons/react";
+  ClockIcon,
+  ShieldCheckIcon,
+  CircleNotchIcon,
+} from "@phosphor-icons/react";
+import { sellerAuthApi, type BusinessVerificationResult } from "@/resources/apis/seller-auth.api";
 import {
   sellerSignupSchema,
   type SellerSignupFormValues,
@@ -36,6 +39,8 @@ export function SellerSignupForm() {
   const [currentStep, setCurrentStep] = React.useState<1 | 2 | 3>(1);
   const [showPassword, setShowPassword] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [isVerifyingYtunnus, setIsVerifyingYtunnus] = React.useState(false);
+  const [ytunnusResult, setYtunnusResult] = React.useState<BusinessVerificationResult | null>(null);
   const [submittedStore, setSubmittedStore] = React.useState<{
     name: string;
     email: string;
@@ -45,7 +50,8 @@ export function SellerSignupForm() {
     register,
     handleSubmit,
     trigger,
-    setValue,
+    setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<SellerSignupFormValues>({
     resolver: zodResolver(sellerSignupSchema),
@@ -64,6 +70,50 @@ export function SellerSignupForm() {
     },
     mode: "onBlur",
   });
+
+  // Verify Finnish Business ID (Y-tunnus) with official PRH / YTJ Open Data API
+  const handleVerifyBusinessId = async (idToVerify?: string) => {
+    const rawVal = idToVerify || watch("businessId");
+    if (!rawVal || rawVal.trim().length < 6) {
+      toast.error("Please enter a valid Finnish Business ID (Y-tunnus, e.g. 0112038-9)");
+      return;
+    }
+
+    setIsVerifyingYtunnus(true);
+    setYtunnusResult(null);
+
+    try {
+      const res = await sellerAuthApi.verifyBusinessId(rawVal);
+      setYtunnusResult(res);
+
+      if (res.valid) {
+        toast.success(`PRH Verified: ${res.companyName}`);
+        setValue("businessId", res.businessId, { shouldValidate: true });
+
+        const currentLegal = watch("legalBusinessName");
+        if ((!currentLegal || currentLegal.trim() === "") && res.companyName) {
+          setValue("legalBusinessName", res.companyName, { shouldValidate: true });
+        }
+
+        const currentVat = watch("vatId");
+        if ((!currentVat || currentVat.trim() === "") && res.businessId) {
+          const digitsOnly = res.businessId.replace(/\D/g, "");
+          setValue("vatId", `FI${digitsOnly}`, { shouldValidate: true });
+        }
+
+        const currentAddr = watch("businessAddress");
+        if ((!currentAddr || currentAddr.trim() === "") && res.fullAddress) {
+          setValue("businessAddress", res.fullAddress, { shouldValidate: false });
+        }
+      } else {
+        toast.error(res.message || "Business ID not found in Finnish Trade Register (PRH / YTJ)");
+      }
+    } catch {
+      toast.error("Failed to verify Business ID with PRH YTJ API");
+    } finally {
+      setIsVerifyingYtunnus(false);
+    }
+  };
 
   // Step validation before advancing
   const handleNextStep = async () => {
@@ -123,10 +173,10 @@ export function SellerSignupForm() {
   // Demo fill helper
   const handleFillSampleStudio = () => {
     const randomId = Math.floor(1000000 + Math.random() * 9000000);
-    setValue("storeName", "Lapland Woodcraft Studio", { shouldValidate: true });
-    setValue("legalBusinessName", "Lapland Woodcraft Oy", { shouldValidate: true });
-    setValue("businessId", `${randomId}-1`, { shouldValidate: true });
-    setValue("vatId", `FI${randomId}`, { shouldValidate: true });
+    setValue("storeName", "Nordic Artisan Atelier", { shouldValidate: true });
+    setValue("legalBusinessName", "Marimekko Oyj", { shouldValidate: true });
+    setValue("businessId", "0111316-2", { shouldValidate: true });
+    setValue("vatId", "FI01113162", { shouldValidate: true });
     setValue("contactName", "Tapio Korhonen", { shouldValidate: true });
     setValue("email", `tapio.${Date.now()}@woodcraft.fi`, { shouldValidate: true });
     setValue("phone", "+358 40 987 6543", { shouldValidate: true });
@@ -276,9 +326,29 @@ export function SellerSignupForm() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <label htmlFor="businessId" className="block text-xs font-semibold text-foreground">
-                  Business ID / Y-tunnus *
-                </label>
+                <div className="flex items-center justify-between">
+                  <label htmlFor="businessId" className="block text-xs font-semibold text-foreground">
+                    Business ID / Y-tunnus *
+                  </label>
+                  <button
+                    type="button"
+                    disabled={isVerifyingYtunnus}
+                    onClick={() => handleVerifyBusinessId()}
+                    className="text-[11px] font-semibold text-brand-deep-forest dark:text-emerald-400 hover:underline inline-flex items-center gap-1 disabled:opacity-50 transition-colors cursor-pointer"
+                  >
+                    {isVerifyingYtunnus ? (
+                      <>
+                        <CircleNotchIcon className="size-3 animate-spin" />
+                        <span>Checking PRH...</span>
+                      </>
+                    ) : (
+                      <>
+                        <ShieldCheckIcon className="size-3.5" weight="bold" />
+                        <span>Verify with PRH</span>
+                      </>
+                    )}
+                  </button>
+                </div>
                 <div className="relative">
                   <IdentificationCardIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                   <input
@@ -286,11 +356,45 @@ export function SellerSignupForm() {
                     type="text"
                     placeholder="1234567-8"
                     {...register("businessId")}
+                    onBlur={(e) => {
+                      if (e.target.value.trim().length >= 7 && !ytunnusResult?.valid) {
+                        handleVerifyBusinessId(e.target.value);
+                      }
+                    }}
                     className="w-full h-10 pl-9 pr-3 text-xs font-mono bg-background border border-border rounded-none focus:outline-none focus:ring-1 focus:ring-primary"
                   />
                 </div>
                 {errors.businessId && (
                   <p className="text-[11px] text-destructive">{errors.businessId.message}</p>
+                )}
+
+                {/* PRH / YTJ Verification Badge */}
+                {ytunnusResult?.valid && (
+                  <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-none flex items-start gap-2 text-emerald-800 dark:text-emerald-300 text-[11px] animate-in fade-in duration-200">
+                    <CheckCircleIcon className="size-4 shrink-0 mt-0.5 text-emerald-600 dark:text-emerald-400" weight="fill" />
+                    <div className="space-y-0.5">
+                      <div className="font-semibold flex items-center gap-1.5">
+                        <span>Verified with PRH Finnish Trade Register</span>
+                        <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 bg-emerald-200 dark:bg-emerald-800 text-emerald-900 dark:text-emerald-100 font-bold">
+                          {ytunnusResult.tradeRegisterStatus || 'Registered'}
+                        </span>
+                      </div>
+                      <p className="text-muted-foreground">
+                        Official Entity: <strong className="text-foreground font-medium">{ytunnusResult.companyName}</strong>
+                        {ytunnusResult.city ? ` • ${ytunnusResult.city}` : ''}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {ytunnusResult && !ytunnusResult.valid && (
+                  <div className="p-2.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-none flex items-start gap-2 text-rose-800 dark:text-rose-300 text-[11px] animate-in fade-in duration-200">
+                    <WarningCircleIcon className="size-4 shrink-0 mt-0.5 text-rose-600 dark:text-rose-400" weight="fill" />
+                    <div>
+                      <span className="font-semibold">Registry Notice: </span>
+                      <span>{ytunnusResult.message || 'Y-tunnus not found in Finnish YTJ database.'}</span>
+                    </div>
+                  </div>
                 )}
               </div>
 
