@@ -187,11 +187,11 @@ function EditProductForm() {
   // Real-time Earnings Calculation based on configured platform fee
   const numPrice = Number(price) || 0;
   const commissionRate = (env.platformCommissionPercent || 10) / 100;
-  const estimatedVat = vatIncluded
-    ? numPrice - numPrice / (1 + vatRate / 100)
-    : (numPrice * vatRate) / 100;
+  const customerPrice = vatIncluded ? numPrice : numPrice * (1 + vatRate / 100);
+  const netPriceBeforeVat = vatIncluded ? numPrice / (1 + vatRate / 100) : numPrice;
+  const estimatedVat = customerPrice - netPriceBeforeVat;
   const platformFee = numPrice * commissionRate;
-  const sellerTakeHome = numPrice * (1 - commissionRate);
+  const sellerTakeHome = Math.max(0, netPriceBeforeVat - platformFee);
 
   // Handle Save
   const handleSave = async (submitForReview = false) => {
@@ -748,19 +748,33 @@ function EditProductForm() {
 
             <div className="space-y-3 text-xs">
               <div className="flex items-center justify-between text-muted-foreground">
-                <span>Customer Price</span>
+                <span>Customer Checkout Price</span>
                 <span className="font-mono font-semibold text-foreground">
-                  €{numPrice.toFixed(2)}
+                  €{customerPrice.toFixed(2)}
                 </span>
               </div>
 
               <div className="flex items-center justify-between text-muted-foreground">
-                <span>Estimated Finnish VAT ({vatRate}%)</span>
-                <span className="font-mono">€{estimatedVat.toFixed(2)}</span>
+                <span>
+                  Estimated Finnish VAT ({vatRate}%)
+                  <span className="block text-[10px] text-muted-foreground/75">
+                    {vatIncluded ? "(Included in price)" : "(Added at checkout)"}
+                  </span>
+                </span>
+                <span className="font-mono text-muted-foreground">
+                  -€{estimatedVat.toFixed(2)}
+                </span>
               </div>
 
               <div className="flex items-center justify-between text-muted-foreground">
-                <span>Nordic Platform Fee ({env.platformCommissionPercent}%)</span>
+                <span>Net Sales Revenue (excl. VAT)</span>
+                <span className="font-mono font-medium text-foreground">
+                  €{netPriceBeforeVat.toFixed(2)}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between text-muted-foreground">
+                <span>Oivaly Platform Fee ({env.platformCommissionPercent}%)</span>
                 <span className="font-mono text-destructive">
                   -€{platformFee.toFixed(2)}
                 </span>
@@ -769,10 +783,10 @@ function EditProductForm() {
               <div className="pt-3 border-t border-border/80 flex items-center justify-between">
                 <div>
                   <span className="font-semibold text-foreground block">
-                    Artisan Payout ({100 - env.platformCommissionPercent}%)
+                    Seller Net Payout
                   </span>
                   <span className="text-[10px] text-muted-foreground">
-                    Direct to your verified account
+                    What you actually receive into your bank account
                   </span>
                 </div>
                 <span className="text-lg font-bold font-mono text-emerald-700 dark:text-emerald-300">
@@ -781,12 +795,12 @@ function EditProductForm() {
               </div>
             </div>
 
-            {/* Workshop Guarantee Box */}
+            {/* Guarantee Box */}
             <div className="mt-4 p-3 bg-muted/40 border border-border/60 rounded-none text-[11px] text-muted-foreground space-y-1.5">
               <div className="flex items-start gap-2">
                 <InfoIcon className="size-3.5 text-primary shrink-0 mt-0.5" />
                 <p>
-                  Funds are credited to your artisan store account immediately upon order completion. Payouts are executed weekly to verified EU bank accounts.
+                  Funds are secured on Oivaly and automatically disbursed to your verified bank account after order fulfillment.
                 </p>
               </div>
             </div>

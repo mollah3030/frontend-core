@@ -23,13 +23,13 @@ export async function generateMetadata({
 
   if (q) {
     return {
-      title: `Search: "${q}" | Nordic Marketplace`,
+      title: `Search: "${q}" | Oivaly`,
       description: `Discover Nordic goods and handcrafted designs matching "${q}".`,
     };
   }
 
   return {
-    title: "All Products | Nordic Marketplace",
+    title: "All Products | Oivaly",
     description: "Browse curated Nordic goods, gifts, and independent studio craftsmanship.",
   };
 }

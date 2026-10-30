@@ -1,4 +1,4 @@
-# Nordic Marketplace — Finnish Multi-Vendor Platform
+# Oivaly — Finnish Multi-Vendor Platform
 
 A premium Nordic multi-vendor marketplace connecting Finnish artisans, merchants, and discerning shoppers with a calm, trustworthy Scandinavian shopping experience.
 

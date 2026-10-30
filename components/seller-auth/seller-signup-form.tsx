@@ -156,7 +156,7 @@ export function SellerSignupForm() {
           </h3>
 
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Thank you for applying to open <strong className="text-foreground">{submittedStore.name}</strong> on Nordic Marketplace.
+            Thank you for applying to open <strong className="text-foreground">{submittedStore.name}</strong> on Oivaly.
             Our curation team reviews every artisan studio to maintain exceptional Nordic craft standards.
           </p>
         </div>
@@ -482,7 +482,7 @@ export function SellerSignupForm() {
                   className="mt-0.5 size-4 rounded-none border-border text-primary focus:ring-primary"
                 />
                 <span className="text-xs text-foreground leading-snug">
-                  I accept the <strong>Nordic Marketplace Seller Agreement</strong> and confirm our products comply with Finnish craft &amp; consumer safety regulations.
+                  I accept the <strong>Oivaly Seller Agreement</strong> and confirm our products comply with Finnish craft &amp; consumer safety regulations.
                 </span>
               </label>
               {errors.sellerAgreementAccepted && (

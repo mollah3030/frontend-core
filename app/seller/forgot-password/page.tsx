@@ -3,7 +3,7 @@ import { SellerAuthLayout } from "@/components/seller-auth/seller-auth-layout";
 import { SellerForgotPasswordForm } from "@/components/seller-auth/seller-forgot-password-form";
 
 export const metadata: Metadata = {
-  title: "Recover Studio Password | Nordic Marketplace Seller Portal",
+  title: "Recover Studio Password | Oivaly Seller Portal",
   description:
     "Reset your studio administrator password. Enter your registered business email to receive recovery instructions.",
 };

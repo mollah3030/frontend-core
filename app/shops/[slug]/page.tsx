@@ -30,17 +30,17 @@ export async function generateMetadata({
 
   if (!store) {
     return {
-      title: "Shop Not Found | Nordic Marketplace",
+      title: "Shop Not Found | Oivaly",
     };
   }
 
   return {
-    title: `${store.name} | Nordic Marketplace`,
+    title: `${store.name} | Oivaly`,
     description:
       store.description ||
-      `Explore handcrafted Nordic items and design pieces by ${store.name} on Nordic Marketplace.`,
+      `Explore handcrafted Nordic items and design pieces by ${store.name} on Oivaly.`,
     openGraph: {
-      title: `${store.name} — Independent Maker | Nordic Marketplace`,
+      title: `${store.name} — Independent Maker | Oivaly`,
       description: store.description || undefined,
       images: store.bannerUrl
         ? [{ url: store.bannerUrl }]
@@ -75,7 +75,7 @@ async function ShopPageContent({
           Shop Currently Unavailable
         </h1>
         <p className="text-sm text-muted-foreground max-w-md mx-auto">
-          This studio storefront is currently not active on Nordic Marketplace.
+          This studio storefront is currently not active on Oivaly.
         </p>
         <div className="pt-4">
           <Link

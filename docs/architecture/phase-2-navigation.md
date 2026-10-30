@@ -1,7 +1,7 @@
 # Phase 2: Global Layout & Navigation Architecture
 
 ## Overview
-Phase 2 establishes the responsive application shell and global navigation for the Finnish Multi-Vendor Marketplace (**Nordic Marketplace**). The visual identity reflects Scandinavian editorial simplicity, high-trust commerce, and responsive usability across all viewports (from 320px mobile to 1440px desktop).
+Phase 2 establishes the responsive application shell and global navigation for the Finnish Multi-Vendor Marketplace (**Oivaly**). The visual identity reflects Scandinavian editorial simplicity, high-trust commerce, and responsive usability across all viewports (from 320px mobile to 1440px desktop).
 
 ---
 
@@ -25,7 +25,7 @@ components/layout/
 - **Dismissible**: Client-side dismiss with accessible `XIcon` button and `aria-label`.
 
 ### 2. Header & Search Bar (`SiteHeader` & `SearchBar`)
-- **Brand Identity**: Clean typographical wordmark `"Nordic.Market"` with `"FINNISH MULTI-VENDOR"` subtitle.
+- **Brand Identity**: Clean typographical wordmark `"Oivaly"` with `"FINNISH MULTI-VENDOR"` subtitle.
 - **Search Experience**:
   - Accessible `<form role="search">` with label, icon prefix, and submit button.
   - Submits to `/search?q=<query>` with trimmed, URI-encoded parameter.

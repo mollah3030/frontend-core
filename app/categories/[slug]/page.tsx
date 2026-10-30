@@ -25,12 +25,12 @@ export async function generateMetadata({
 
   if (!category) {
     return {
-      title: "Category not found | Nordic Marketplace",
+      title: "Category not found | Oivaly",
     };
   }
 
   return {
-    title: `${category.name} | Nordic Marketplace`,
+    title: `${category.name} | Oivaly`,
     description:
       category.description ||
       `Explore ${category.name.toLowerCase()} pieces crafted by independent Nordic makers.`,

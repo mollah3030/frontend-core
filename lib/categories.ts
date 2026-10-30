@@ -1,4 +1,5 @@
 import { categoriesApi } from '@/resources/apis/categories.api';
+import { productsApi } from '@/resources/apis/products.api';
 import { PROVISIONAL_CATEGORIES, type NavCategory } from '@/config/navigation';
 
 export interface MarketplaceCategory {
@@ -9,6 +10,7 @@ export interface MarketplaceCategory {
   imageUrl: string | null;
   isBackend: boolean;
   parentId?: string | null;
+  productCount?: number;
 }
 
 const CATEGORY_DEFAULT_IMAGES: Record<string, string> = {
@@ -33,51 +35,72 @@ const CATEGORY_DEFAULT_IMAGES: Record<string, string> = {
 };
 
 /**
- * Retrieves all platform categories by uniting active backend categories
- * with editorial navigation categories.
+ * Retrieves all platform categories directly from active backend categories API.
+ * Dynamically resolves product count and authentic cover images from live marketplace items.
  */
 export async function getMarketplaceCategories(): Promise<MarketplaceCategory[]> {
   const categories: MarketplaceCategory[] = [];
-  const existingSlugs = new Set<string>();
 
-  // 1. Fetch real active categories from backend
+  // 1. Fetch real active categories and live products concurrently from backend API
   try {
-    const backendCategories = await categoriesApi.getCategories('ACTIVE');
-    if (Array.isArray(backendCategories)) {
+    const [backendCategories, productsRes] = await Promise.all([
+      categoriesApi.getCategories('ACTIVE'),
+      productsApi.getMarketplace({ limit: 50 }).catch(() => null),
+    ]);
+
+    const liveProducts = productsRes?.data || [];
+
+    if (Array.isArray(backendCategories) && backendCategories.length > 0) {
       backendCategories.forEach((cat) => {
-        existingSlugs.add(cat.slug);
+        // Find matching live products in this category
+        const matchingProducts = liveProducts.filter(
+          (p) =>
+            p.categoryId === cat.id ||
+            p.category?.slug === cat.slug ||
+            p.category?.id === cat.id
+        );
+
+        // Find primary image from live products if available
+        const productWithImg = matchingProducts.find(
+          (p) => p.images && p.images.length > 0 && p.images[0]?.url
+        );
+
+        const resolvedImageUrl =
+          (cat as unknown as { imageUrl?: string }).imageUrl ||
+          productWithImg?.images?.[0]?.url ||
+          CATEGORY_DEFAULT_IMAGES[cat.slug] ||
+          null;
+
         categories.push({
           id: cat.id,
           name: cat.name,
           slug: cat.slug,
           description: cat.description || null,
-          imageUrl:
-            (cat as unknown as { imageUrl?: string }).imageUrl ||
-            CATEGORY_DEFAULT_IMAGES[cat.slug] ||
-            null,
+          imageUrl: resolvedImageUrl,
           isBackend: true,
           parentId: cat.parentId || null,
+          productCount: matchingProducts.length,
         });
       });
+
+      return categories;
     }
   } catch (err) {
     console.warn('[categories] Failed to fetch backend categories, using editorial fallback:', err);
   }
 
-  // 2. Add provisional navigation categories for un-migrated sections
+  // 2. Fallback only if backend categories API is completely unreachable
   PROVISIONAL_CATEGORIES.forEach((prov: NavCategory) => {
-    if (!existingSlugs.has(prov.slug)) {
-      existingSlugs.add(prov.slug);
-      categories.push({
-        id: prov.slug,
-        name: prov.title,
-        slug: prov.slug,
-        description: prov.description || null,
-        imageUrl: CATEGORY_DEFAULT_IMAGES[prov.slug] || null,
-        isBackend: false,
-        parentId: null,
-      });
-    }
+    categories.push({
+      id: prov.slug,
+      name: prov.title,
+      slug: prov.slug,
+      description: prov.description || null,
+      imageUrl: CATEGORY_DEFAULT_IMAGES[prov.slug] || null,
+      isBackend: false,
+      parentId: null,
+      productCount: 0,
+    });
   });
 
   return categories;

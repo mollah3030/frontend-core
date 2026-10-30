@@ -51,7 +51,7 @@ export function ShopAbout({ store }: ShopAboutProps) {
               </p>
             ) : (
               <p className="italic">
-                The maker has not yet provided a detailed public studio biography. All items from {store.name} are curated directly through Nordic Marketplace.
+                The maker has not yet provided a detailed public studio biography. All items from {store.name} are curated directly through Oivaly.
               </p>
             )}
 

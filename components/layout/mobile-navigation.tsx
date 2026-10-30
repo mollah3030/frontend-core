@@ -65,7 +65,7 @@ export function MobileNavigation({
       >
         <SheetHeader className="p-4 border-b border-border/70 text-left">
           <SheetTitle className="text-base font-semibold tracking-tight">
-            Nordic Marketplace
+            Oivaly
           </SheetTitle>
           <SheetDescription className="text-xs text-muted-foreground">
             Curated marketplace for independent Nordic makers
@@ -150,7 +150,7 @@ export function MobileNavigation({
               className="flex items-center gap-2.5 min-h-[44px] px-2.5 py-2 text-sm text-foreground hover:bg-muted rounded transition-colors"
             >
               <StorefrontIcon className="size-4 text-muted-foreground" aria-hidden="true" />
-              <span>Sell on Nordic Market</span>
+              <span>Sell on Oivaly</span>
             </Link>
           </div>
 

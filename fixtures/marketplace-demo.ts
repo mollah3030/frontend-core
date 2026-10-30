@@ -1,5 +1,5 @@
 /**
- * Demonstration fixtures for Nordic Marketplace.
+ * Demonstration fixtures for Oivaly.
  *
  * NOTE: These are presentation-only demonstration items used to establish
  * the editorial Scandinavian layout patterns. When live marketplace data

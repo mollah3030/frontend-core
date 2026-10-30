@@ -3,7 +3,7 @@ import { SellerAuthLayout } from "@/components/seller-auth/seller-auth-layout";
 import { SellerLoginForm } from "@/components/seller-auth/seller-login-form";
 
 export const metadata: Metadata = {
-  title: "Artisan Studio Sign In | Nordic Marketplace Seller Portal",
+  title: "Artisan Studio Sign In | Oivaly Seller Portal",
   description:
     "Sign in to your artisan workshop dashboard. Manage Nordic handmade listings, orders, Posti parcel dispatches, and sales payouts.",
 };

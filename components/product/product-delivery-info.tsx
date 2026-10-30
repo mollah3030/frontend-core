@@ -87,7 +87,7 @@ export function ProductDeliveryInfo({
           aria-hidden="true"
         />
         <div>
-          <p className="font-medium text-foreground">Nordic Marketplace Buyer Protection</p>
+          <p className="font-medium text-foreground">Oivaly Buyer Protection</p>
           <p className="text-[11px] text-muted-foreground mt-0.5">
             Secure bank-grade encrypted checkout. Payment is held securely until your order is fulfilled.
           </p>

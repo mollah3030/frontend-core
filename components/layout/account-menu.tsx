@@ -93,7 +93,7 @@ export function AccountMenu({ user: propUser, className }: AccountMenuProps) {
         ) : (
           <>
             <DropdownMenuLabel className="px-2 py-2">
-              <p className="text-xs font-medium text-foreground">Welcome to Nordic Market</p>
+              <p className="text-xs font-medium text-foreground">Welcome to Oivaly</p>
               <p className="text-[11px] text-muted-foreground mt-0.5">
                 Sign in to track orders, save favourites, and discover makers.
               </p>
@@ -115,7 +115,7 @@ export function AccountMenu({ user: propUser, className }: AccountMenuProps) {
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild onClick={() => setOpen(false)}>
               <Link href={HEADER_NAV_CONFIG.routes.sell} className="w-full cursor-pointer">
-                Sell on Nordic Market
+                Sell on Oivaly
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild onClick={() => setOpen(false)}>

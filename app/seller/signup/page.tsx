@@ -5,7 +5,7 @@ import { SellerSignupForm } from "@/components/seller-auth/seller-signup-form";
 export const metadata: Metadata = {
   title: "Open a Nordic Artisan Studio | Seller Onboarding",
   description:
-    "Apply to become an approved seller on Nordic Marketplace. Reach design collectors across Finland, Sweden, and Scandinavia with zero monthly listing fees.",
+    "Apply to become an approved seller on Oivaly. Reach design collectors across Finland, Sweden, and Scandinavia with zero monthly listing fees.",
 };
 
 export default function SellerSignupPage() {

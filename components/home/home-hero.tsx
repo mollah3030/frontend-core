@@ -40,7 +40,7 @@ const TRUST_PILLS = [
 ];
 
 /**
- * Editorial Scandinavian & Etsy-inspired Hero Section for Nordic Marketplace.
+ * Editorial Scandinavian & Etsy-inspired Hero Section for Oivaly.
  * Features an artisan lifestyle collage, integrated discovery search bar,
  * quick category chips, floating product callouts, and maker badges.
  */
@@ -67,7 +67,7 @@ export function HomeHero({
 
   return (
     <section
-      aria-label="Welcome to Nordic Marketplace"
+      aria-label="Welcome to Oivaly"
       className="relative overflow-hidden bg-brand-warm-ivory dark:bg-card/40 border-b border-border/80"
     >
       {/* Subtle warm organic ambient background */}

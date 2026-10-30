@@ -1,7 +1,7 @@
 # Phase 3: Homepage Implementation Architecture
 
 ## Overview
-Phase 3 implements the complete, responsive homepage for **Nordic Marketplace** (`http://localhost:4242`). The design realizes an original Scandinavian e-commerce atmosphere: warm off-white surfaces (`#FAF9F6`), soft sage accents (`#78947B`, `#536F57`, `#E7EFE5`), restrained borders, editorial typography (Geist Sans), and artisan-focused merchandising.
+Phase 3 implements the complete, responsive homepage for **Oivaly** (`http://localhost:4242`). The design realizes an original Scandinavian e-commerce atmosphere: warm off-white surfaces (`#FAF9F6`), soft sage accents (`#78947B`, `#536F57`, `#E7EFE5`), restrained borders, editorial typography (Geist Sans), and artisan-focused merchandising.
 
 ---
 

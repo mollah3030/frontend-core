@@ -71,7 +71,7 @@ export function AuthCardLayout({
               <Link
                 href="/"
                 className="font-heading text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-2 group"
-                aria-label="Nordic Marketplace Home"
+                aria-label="Oivaly Home"
               >
                 <span className="size-7 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-xs font-mono font-bold group-hover:scale-105 transition-transform">
                   N

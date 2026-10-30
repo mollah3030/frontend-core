@@ -65,7 +65,7 @@ export function SellerAuthLayout({
             </h1>
 
             <p className="text-xs xl:text-sm text-white/75 mt-3 leading-relaxed">
-              Nordic Marketplace is Finland&apos;s premier multi-vendor haven for independent
+              Oivaly is Finland&apos;s premier multi-vendor haven for independent
               ceramicists, carpenters, jewelers, and textile artisans. Maintain full creative
               freedom while we handle the checkout, VAT, and logistics.
             </p>
@@ -119,7 +119,7 @@ export function SellerAuthLayout({
         <div className="relative z-10 pt-8 border-t border-white/10 space-y-4">
           <blockquote className="space-y-1.5">
             <p className="text-[11px] text-white/80 italic leading-relaxed">
-              &ldquo;Nordic Marketplace connected our ceramic workshop with conscious collectors
+              &ldquo;Oivaly connected our ceramic workshop with conscious collectors
               across Helsinki and Stockholm. Setup took under 10 minutes.&rdquo;
             </p>
             <footer className="text-[10px] text-emerald-300 font-medium">
@@ -147,7 +147,7 @@ export function SellerAuthLayout({
             </div>
             <div>
               <span className="font-heading font-bold text-sm tracking-tight text-foreground block">
-                Nordic.Market
+                Oivaly
               </span>
               <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
                 Seller Atelier Portal

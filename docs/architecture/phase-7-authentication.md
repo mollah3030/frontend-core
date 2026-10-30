@@ -12,7 +12,7 @@ Phase 7 implements a secure, accessible, customer authentication and account man
 The customer entry flows (`/login`, `/register`, `/forgot-password`, `/reset-password`) are built around a focused split-card design:
 - **Left Column: Atmospheric Visual Showcase**
   - Atmospheric Scandinavian twilight landscape photography (`public/images/auth-hero.jpg`).
-  - Brand identity wordmark: `Nordic.Market`.
+  - Brand identity wordmark: `Oivaly`.
   - Glassmorphic "Back to website →" button for seamless return navigation.
   - Tagline: *"Capturing Moments, Creating Memories"*.
   - Minimalist pagination slider indicator pills.

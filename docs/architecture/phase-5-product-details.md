@@ -1,7 +1,7 @@
 # Phase 5: Product Details Page (PDP) Architecture
 
 ## 1. Overview & Objective
-Phase 5 implements the complete, responsive product details experience for **Nordic Marketplace** (`http://localhost:4242`). The design realizes an original Scandinavian e-commerce atmosphere: warm off-white surfaces (`#FAF9F6`), soft sage accents (`#78947B`, `#536F57`, `#E7EFE5`), charcoal typography (`#292E29`), restrained borders, generous whitespace, and artisan-focused merchandising.
+Phase 5 implements the complete, responsive product details experience for **Oivaly** (`http://localhost:4242`). The design realizes an original Scandinavian e-commerce atmosphere: warm off-white surfaces (`#FAF9F6`), soft sage accents (`#78947B`, `#536F57`, `#E7EFE5`), charcoal typography (`#292E29`), restrained borders, generous whitespace, and artisan-focused merchandising.
 
 The PDP provides:
 - **Product Route (`/products/[slug]`)**: Resolves products by either UUID or slug, supporting both live backend inventory and demonstration fixtures.

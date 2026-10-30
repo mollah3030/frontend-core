@@ -1,7 +1,7 @@
 # Phase 6: Seller Storefronts Architecture
 
 ## 1. Overview & Objective
-Phase 6 establishes complete, responsive seller storefront pages for **Nordic Marketplace** (`http://localhost:4242/shops/[slug]`). The design realizes an original Scandinavian e-commerce atmosphere: warm off-white surfaces (`#FAF9F6`), soft sage accents (`#78947B`, `#536F57`, `#E7EFE5`), charcoal typography (`#292E29`), generous whitespace, and an artisan-first presentation.
+Phase 6 establishes complete, responsive seller storefront pages for **Oivaly** (`http://localhost:4242/shops/[slug]`). The design realizes an original Scandinavian e-commerce atmosphere: warm off-white surfaces (`#FAF9F6`), soft sage accents (`#78947B`, `#536F57`, `#E7EFE5`), charcoal typography (`#292E29`), generous whitespace, and an artisan-first presentation.
 
 The Seller Storefront experience includes:
 - **Canonical Seller Route (`/shops/[slug]`)**: Resolves stores by UUID, store ID, or name slug. Supports both live backend merchant entities (`Store`) and demonstration fixtures.
@@ -13,7 +13,7 @@ The Seller Storefront experience includes:
 - **Scoped Product Grid (`components/shops/shop-product-grid.tsx`)**: Responsive 4-column product grid reusing the Phase 3 `ProductCard` component, scoped strictly to the selected merchant, with page-based pagination controls.
 - **Friendly Empty States (`components/shops/shop-empty-state.tsx`)**: Clear distinction between an empty inventory and a filter combination returning 0 matches.
 - **About the Maker (`components/shops/shop-about.tsx`)**: Public studio biography, direct artisan connection explanation, and verified commercial details (Legal Business Name, Finnish Business ID / Y-tunnus, VAT ID, studio address, customer support phone, and official website).
-- **Shop & Consumer Policies (`components/shops/shop-policies.tsx`)**: Transparent disclosures distinguishing statutory consumer rights (14-day statutory return under Finnish Kuluttajansuojalaki), studio dispatch timelines, and Nordic Marketplace Buyer Protection.
+- **Shop & Consumer Policies (`components/shops/shop-policies.tsx`)**: Transparent disclosures distinguishing statutory consumer rights (14-day statutory return under Finnish Kuluttajansuojalaki), studio dispatch timelines, and Oivaly Buyer Protection.
 - **Customer Reviews (`components/shops/shop-reviews.tsx`)**: Genuine rating breakdown when available, and a reassuring empty state with buyer protection guarantees when reviews are pending.
 - **Loading & Error States (`app/shops/[slug]/loading.tsx`)**: Streaming skeleton matching banner, profile, filter bar, and product card dimensions. Respectful unavailable notice for suspended or rejected accounts.
 

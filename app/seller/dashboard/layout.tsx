@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { SellerDashboardLayout } from "@/components/seller-dashboard/seller-dashboard-layout";
 
 export const metadata: Metadata = {
-  title: "Artisan Atelier Dashboard | Nordic Marketplace",
+  title: "Artisan Atelier Dashboard | Oivaly",
   description:
     "Manage your Finnish craft listings, orders, Posti shipping fulfillment, inventory, and payout earnings.",
 };

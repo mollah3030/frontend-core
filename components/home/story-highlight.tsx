@@ -48,7 +48,7 @@ export function StoryHighlight() {
           >
             <Link href="/seller/signup">
               <StorefrontIcon className="size-4 mr-1.5 text-primary" aria-hidden="true" />
-              <span>Sell on Nordic Market</span>
+              <span>Sell on Oivaly</span>
             </Link>
           </Button>
         </div>

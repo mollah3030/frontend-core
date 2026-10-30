@@ -79,10 +79,10 @@ export function SiteFooter({ className, ...props }: SiteFooterProps) {
               href="/"
               className="inline-block font-heading text-xl font-bold tracking-tight text-foreground hover:text-primary transition-colors"
             >
-              Nordic<span className="text-primary font-light">.</span>Market
+              Oivaly<span className="text-primary font-light">.</span>
             </Link>
             <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
-              A curated Finnish multi-vendor marketplace connecting discerning shoppers with independent Nordic makers.
+              A modern multi-vendor marketplace connecting discerning shoppers with quality stores.
             </p>
 
             <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
@@ -96,7 +96,7 @@ export function SiteFooter({ className, ...props }: SiteFooterProps) {
                 className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
               >
                 <StorefrontIcon className="size-3.5" aria-hidden="true" />
-                <span>Sell on Nordic Market</span>
+                <span>Sell on Oivaly</span>
               </Link>
             </div>
           </div>
@@ -126,7 +126,7 @@ export function SiteFooter({ className, ...props }: SiteFooterProps) {
         {/* 3. Bottom Legal & Localization Bar */}
         <div className="mt-12 pt-6 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
           <p className="text-center sm:text-left">
-            &copy; 2026 Nordic Marketplace Oy. All rights reserved.
+            &copy; 2026 Oivaly Oy. All rights reserved.
           </p>
 
           <div className="flex items-center gap-4 text-xs">

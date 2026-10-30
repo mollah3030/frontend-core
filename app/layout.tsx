@@ -24,11 +24,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Nordic Marketplace | Finnish Multi-Vendor Platform",
-    template: "%s | Nordic Marketplace",
+    default: "Oivaly | Finnish Multi-Vendor Platform",
+    template: "%s | Oivaly",
   },
   description:
-    "A calm, trustworthy Finnish multi-vendor marketplace connecting Nordic artisans, brands, and buyers.",
+    "A modern, trustworthy multi-vendor marketplace connecting stores, brands, and buyers.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

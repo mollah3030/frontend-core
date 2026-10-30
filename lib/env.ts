@@ -1,5 +1,5 @@
 /**
- * Centralized, type-safe environment configuration for Nordic Marketplace Frontend.
+ * Centralized, type-safe environment configuration for Oivaly Frontend.
  * Reads runtime and build-time variables from process.env with documented fallbacks.
  */
 
@@ -63,5 +63,5 @@ export const env = {
   /**
    * Human-readable platform title.
    */
-  platformName: process.env.NEXT_PUBLIC_PLATFORM_NAME || 'Nordic Marketplace',
+  platformName: process.env.NEXT_PUBLIC_PLATFORM_NAME || 'Oivaly',
 } as const;

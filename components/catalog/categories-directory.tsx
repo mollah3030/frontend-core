@@ -65,7 +65,7 @@ export function CategoriesDirectory({ categories }: CategoriesDirectoryProps) {
           <Link
             key={cat.id}
             href={`/categories/${cat.slug}`}
-            className="group flex flex-col bg-card border border-border/70 hover:border-border transition-all duration-200 overflow-hidden"
+            className="group flex flex-col bg-card border border-border/70 hover:border-primary/50 hover:shadow-md transition-all duration-200 overflow-hidden rounded-md"
           >
             <div className="relative aspect-4/3 w-full bg-muted/40 overflow-hidden">
               {cat.imageUrl ? (
@@ -81,19 +81,28 @@ export function CategoriesDirectory({ categories }: CategoriesDirectoryProps) {
                   Category
                 </div>
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
-              <span className="absolute bottom-2.5 left-3 text-xs font-semibold text-white drop-shadow-xs">
-                {cat.name}
-              </span>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-80 group-hover:opacity-60 transition-opacity" />
+              <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between">
+                <span className="text-sm font-semibold text-white drop-shadow-xs">
+                  {cat.name}
+                </span>
+                {typeof cat.productCount === "number" && (
+                  <span className="text-[10px] font-medium text-white/90 bg-black/40 backdrop-blur-xs px-2 py-0.5 rounded-full">
+                    {cat.productCount} {cat.productCount === 1 ? "item" : "items"}
+                  </span>
+                )}
+              </div>
             </div>
 
             <div className="p-3.5 flex flex-1 flex-col justify-between">
               <p className="text-xs text-muted-foreground line-clamp-2">
-                {cat.description || "Explore unique pieces in this department."}
+                {cat.description || (typeof cat.productCount === "number" && cat.productCount > 0
+                  ? `Browse ${cat.productCount} live products in ${cat.name}.`
+                  : `Explore unique pieces in this department.`)}
               </p>
-              <div className="mt-3 pt-2 border-t border-border/40 flex items-center justify-between text-xs font-medium text-primary">
+              <div className="mt-3 pt-2 border-t border-border/40 flex items-center justify-between text-xs font-semibold text-primary">
                 <span>Explore department</span>
-                <ArrowRightIcon className="size-3 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                <ArrowRightIcon className="size-3.5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
               </div>
             </div>
           </Link>

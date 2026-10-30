@@ -132,17 +132,19 @@ export default function NewProductPage() {
     );
   };
 
-  // Real-time Earnings Calculation
+  // Real-time Earnings & Payout Calculation
   const numPrice = Number(price) || 0;
-  // If vatIncluded is true: Net price before VAT = price / (1 + vatRate/100)
-  // VAT amount = price - Net price
-  // Platform commission (10% of gross) = price * 0.10
-  // Seller Net Take-Home (90%) = price * 0.90
-  const estimatedVat = vatIncluded
-    ? numPrice - numPrice / (1 + vatRate / 100)
-    : (numPrice * vatRate) / 100;
-  const platformFee = numPrice * 0.1;
-  const sellerTakeHome = numPrice * 0.9;
+  // 1. Calculate Gross Customer Price and Net Sales Price before VAT
+  const customerPrice = vatIncluded ? numPrice : numPrice * (1 + vatRate / 100);
+  const netPriceBeforeVat = vatIncluded ? numPrice / (1 + vatRate / 100) : numPrice;
+  const estimatedVat = customerPrice - netPriceBeforeVat;
+
+  // 2. Oivaly Platform Fee (10% commission on listing price)
+  const platformFee = numPrice * 0.10;
+
+  // 3. What the seller actually receives after deducting VAT remittance and Oivaly platform fee
+  // Net Payout = Net revenue before VAT - Platform fee
+  const sellerTakeHome = Math.max(0, netPriceBeforeVat - platformFee);
 
   // Handle Form Submission
   const handleSubmit = async (submitForReview: boolean) => {
@@ -562,19 +564,33 @@ export default function NewProductPage() {
 
             <div className="space-y-3 text-xs">
               <div className="flex items-center justify-between text-muted-foreground">
-                <span>Customer Price</span>
+                <span>Customer Checkout Price</span>
                 <span className="font-mono font-semibold text-foreground">
-                  €{numPrice.toFixed(2)}
+                  €{customerPrice.toFixed(2)}
                 </span>
               </div>
 
               <div className="flex items-center justify-between text-muted-foreground">
-                <span>Estimated Finnish VAT ({vatRate}%)</span>
-                <span className="font-mono">€{estimatedVat.toFixed(2)}</span>
+                <span>
+                  Estimated Finnish VAT ({vatRate}%)
+                  <span className="block text-[10px] text-muted-foreground/75">
+                    {vatIncluded ? "(Included in price)" : "(Added at checkout)"}
+                  </span>
+                </span>
+                <span className="font-mono text-muted-foreground">
+                  -€{estimatedVat.toFixed(2)}
+                </span>
               </div>
 
               <div className="flex items-center justify-between text-muted-foreground">
-                <span>Nordic Platform Fee (10%)</span>
+                <span>Net Sales Revenue (excl. VAT)</span>
+                <span className="font-mono font-medium text-foreground">
+                  €{netPriceBeforeVat.toFixed(2)}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between text-muted-foreground">
+                <span>Oivaly Platform Fee (10%)</span>
                 <span className="font-mono text-destructive">
                   -€{platformFee.toFixed(2)}
                 </span>
@@ -583,10 +599,10 @@ export default function NewProductPage() {
               <div className="pt-3 border-t border-border/80 flex items-center justify-between">
                 <div>
                   <span className="font-semibold text-foreground block">
-                    Artisan Payout (90%)
+                    Seller Net Payout
                   </span>
                   <span className="text-[10px] text-muted-foreground">
-                    Direct to your Finnish IBAN
+                    What you actually receive into your bank account
                   </span>
                 </div>
                 <span className="text-lg font-bold font-mono text-emerald-700 dark:text-emerald-300">
@@ -595,12 +611,12 @@ export default function NewProductPage() {
               </div>
             </div>
 
-            {/* Workshop Guarantee Box */}
+            {/* Guarantee Box */}
             <div className="mt-4 p-3 bg-muted/40 border border-border/60 rounded-none text-[11px] text-muted-foreground space-y-1.5">
               <div className="flex items-start gap-2">
                 <InfoIcon className="size-3.5 text-primary shrink-0 mt-0.5" />
                 <p>
-                  Funds are held in high-security escrow for 14 days following delivery to honor EU consumer statutory protections, then automatically released to your available balance.
+                  Funds are secured on Oivaly and automatically disbursed to your verified bank account after order fulfillment.
                 </p>
               </div>
             </div>

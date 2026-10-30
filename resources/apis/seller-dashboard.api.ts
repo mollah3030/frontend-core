@@ -124,6 +124,13 @@ export const sellerDashboardApi = {
     });
   },
 
+  async publishProduct(id: string, storeId?: string): Promise<StoreProductItem> {
+    return apiClient<StoreProductItem>(`/store/products/${id}/publish`, {
+      method: 'POST',
+      headers: getSellerAuthHeaders(storeId),
+    });
+  },
+
 
   async archiveProduct(id: string, storeId?: string): Promise<{ success: boolean }> {
     return apiClient<{ success: boolean }>(`/store/products/${id}/archive`, {

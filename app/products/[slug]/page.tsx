@@ -20,7 +20,7 @@ export async function generateMetadata({
 
   if (!product) {
     return {
-      title: "Product not found | Nordic Marketplace",
+      title: "Product not found | Oivaly",
     };
   }
 
@@ -28,12 +28,12 @@ export async function generateMetadata({
     product.images?.find((img) => img.isPrimary) || product.images?.[0];
 
   return {
-    title: `${product.name} | Nordic Marketplace`,
+    title: `${product.name} | Oivaly`,
     description:
       product.description ||
-      `Purchase ${product.name} directly from independent makers on Nordic Marketplace.`,
+      `Purchase ${product.name} directly from independent makers on Oivaly.`,
     openGraph: {
-      title: `${product.name} | Nordic Marketplace`,
+      title: `${product.name} | Oivaly`,
       description: product.description || undefined,
       images: primaryImage?.url ? [{ url: primaryImage.url }] : undefined,
     },

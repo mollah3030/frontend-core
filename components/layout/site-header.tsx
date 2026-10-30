@@ -69,15 +69,15 @@ export function SiteHeader({
               <Link
                 href={HEADER_NAV_CONFIG.routes.home}
                 className="group flex flex-col justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xs"
-                aria-label="Nordic Marketplace Home"
+                aria-label="Oivaly Home"
               >
                 <div className="flex items-baseline gap-1">
                   <span className="font-heading text-xl sm:text-2xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
-                    Nordic<span className="text-primary font-light">.</span>Market
+                    Oivaly<span className="text-primary font-light">.</span>
                   </span>
                 </div>
                 <span className="hidden sm:inline-block text-[9px] uppercase tracking-widest text-muted-foreground font-semibold -mt-1">
-                  Finnish Multi-Vendor
+                  Marketplace
                 </span>
               </Link>
             </div>
@@ -89,13 +89,13 @@ export function SiteHeader({
 
             {/* Actions (Sell Link, Account, Wishlist, Cart) */}
             <div className="flex items-center gap-1 sm:gap-2">
-              {/* Creator Onboarding / "Sell on Nordic" (Etsy-inspired) */}
+              {/* Creator Onboarding / "Sell on Oivaly" (Etsy-inspired) */}
               <Link
                 href={HEADER_NAV_CONFIG.routes.sell}
                 className="hidden xl:inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-full hover:bg-muted/80"
               >
                 <StorefrontIcon className="size-4 text-primary" aria-hidden="true" />
-                <span>Sell on Nordic</span>
+                <span>Sell on Oivaly</span>
               </Link>
 
               {/* Mobile Search Toggle */}

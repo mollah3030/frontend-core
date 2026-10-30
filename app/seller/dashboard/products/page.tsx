@@ -86,6 +86,18 @@ export default function SellerProductsPage() {
     }
   };
 
+  // Handle Publish Approved Product to Marketplace
+  const handlePublish = async (id: string, name: string) => {
+    try {
+      await sellerDashboardApi.publishProduct(id, store?.id);
+      toast.success(`"${name}" is now live and published on the marketplace!`);
+      loadProducts();
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Publishing failed";
+      toast.error(msg);
+    }
+  };
+
 
   // Handle Archive
   const handleArchive = async (id: string, name: string) => {
@@ -304,35 +316,46 @@ export default function SellerProductsPage() {
 
                       {/* Status Badge */}
                       <td className="py-3 px-3">
-                        {prod.status === "PUBLISHED" ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[10px] font-semibold bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20">
-                            <CheckCircleIcon className="size-3" weight="bold" />
-                            <span>PUBLISHED</span>
-                          </span>
-                        ) : prod.status === "SUBMITTED" || prod.status === "PENDING_REVIEW" ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[10px] font-semibold bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20">
-                            <ClockCountdownIcon className="size-3" weight="bold" />
-                            <span>IN REVIEW</span>
-                          </span>
-                        ) : prod.status === "APPROVED" ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[10px] font-semibold bg-blue-500/10 text-blue-800 dark:text-blue-300 border border-blue-500/20">
-                            <CheckCircleIcon className="size-3" weight="bold" />
-                            <span>APPROVED</span>
-                          </span>
-                        ) : prod.status === "DRAFT" ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[10px] font-semibold bg-muted text-muted-foreground border border-border">
-                            <span>DRAFT</span>
-                          </span>
-                        ) : prod.status === "REJECTED" ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[10px] font-semibold bg-destructive/10 text-destructive border border-destructive/20">
-                            <WarningCircleIcon className="size-3" weight="bold" />
-                            <span>REJECTED</span>
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[10px] font-semibold bg-muted text-muted-foreground border border-border">
-                            <span>{prod.status}</span>
-                          </span>
-                        )}
+                        <div className="flex flex-col items-start gap-1">
+                          {prod.status === "PUBLISHED" ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[10px] font-semibold bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20">
+                              <CheckCircleIcon className="size-3" weight="bold" />
+                              <span>PUBLISHED</span>
+                            </span>
+                          ) : prod.status === "SUBMITTED" || prod.status === "PENDING_REVIEW" ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[10px] font-semibold bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20">
+                              <ClockCountdownIcon className="size-3" weight="bold" />
+                              <span>IN REVIEW</span>
+                            </span>
+                          ) : prod.status === "APPROVED" ? (
+                            <div className="flex items-center gap-1.5">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[10px] font-semibold bg-blue-500/10 text-blue-800 dark:text-blue-300 border border-blue-500/20">
+                                <CheckCircleIcon className="size-3" weight="bold" />
+                                <span>APPROVED</span>
+                              </span>
+                              <Button
+                                size="sm"
+                                onClick={() => handlePublish(prod.id, prod.name)}
+                                className="h-6 px-2 text-[10px] font-semibold rounded-none bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs"
+                              >
+                                Publish
+                              </Button>
+                            </div>
+                          ) : prod.status === "DRAFT" ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[10px] font-semibold bg-muted text-muted-foreground border border-border">
+                              <span>DRAFT</span>
+                            </span>
+                          ) : prod.status === "REJECTED" ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[10px] font-semibold bg-destructive/10 text-destructive border border-destructive/20">
+                              <WarningCircleIcon className="size-3" weight="bold" />
+                              <span>REJECTED</span>
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[10px] font-semibold bg-muted text-muted-foreground border border-border">
+                              <span>{prod.status}</span>
+                            </span>
+                          )}
+                        </div>
                       </td>
 
                       {/* Actions Dropdown */}
@@ -356,6 +379,17 @@ export default function SellerProductsPage() {
                               </Link>
                             </DropdownMenuItem>
 
+
+                            {/* Publish to Marketplace (if Approved by Admin) */}
+                            {prod.status === "APPROVED" && (
+                              <DropdownMenuItem
+                                onClick={() => handlePublish(prod.id, prod.name)}
+                                className="cursor-pointer text-emerald-700 dark:text-emerald-300 font-semibold"
+                              >
+                                <CheckCircleIcon className="size-3.5 mr-2 text-emerald-600" weight="fill" />
+                                <span>Publish to Marketplace</span>
+                              </DropdownMenuItem>
+                            )}
 
                             {/* Submit for Review (if Draft or Rejected) */}
                             {(prod.status === "DRAFT" || prod.status === "REJECTED") && (

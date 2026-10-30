@@ -1,7 +1,7 @@
 # Phase 4: Product Discovery & Search Architecture
 
 ## 1. Overview & Objective
-Phase 4 implements the complete product discovery, catalog browsing, and search experience for **Nordic Marketplace** (`http://localhost:4242`). The solution seamlessly connects the frontend with the active backend (`http://localhost:4040`) while strictly respecting the Scandinavian Sage and Warm Off-White design tokens established in Phase 1.
+Phase 4 implements the complete product discovery, catalog browsing, and search experience for **Oivaly** (`http://localhost:4242`). The solution seamlessly connects the frontend with the active backend (`http://localhost:4040`) while strictly respecting the Scandinavian Sage and Warm Off-White design tokens established in Phase 1.
 
 The discovery experience delivers:
 - **Search Results (`/search?q=...`)**: Full-text keyword querying against backend product titles and descriptions.

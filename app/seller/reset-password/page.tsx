@@ -3,9 +3,9 @@ import { SellerAuthLayout } from "@/components/seller-auth/seller-auth-layout";
 import { SellerResetPasswordForm } from "@/components/seller-auth/seller-reset-password-form";
 
 export const metadata: Metadata = {
-  title: "Set New Studio Password | Nordic Marketplace Seller Portal",
+  title: "Set New Studio Password | Oivaly Seller Portal",
   description:
-    "Set a new password for your artisan workshop administrator account on Nordic Marketplace.",
+    "Set a new password for your artisan workshop administrator account on Oivaly.",
 };
 
 export default function SellerResetPasswordPage() {

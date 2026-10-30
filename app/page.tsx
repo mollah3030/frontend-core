@@ -109,7 +109,7 @@ async function LiveCustomerReviews() {
 }
 
 /**
- * Redesigned Homepage for Nordic Marketplace.
+ * Redesigned Homepage for Oivaly.
  * Server-rendered React component delivering an authentic, Etsy-inspired marketplace experience
  * powered by live backend APIs:
  * - Prominent search-first discovery

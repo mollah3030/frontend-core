@@ -5,9 +5,9 @@ import { CategoriesDirectory } from "@/components/catalog/categories-directory";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const metadata: Metadata = {
-  title: "All Categories | Nordic Marketplace",
+  title: "All Categories | Oivaly",
   description:
-    "Explore all departments, curated collections, and independent maker studios across Nordic Marketplace.",
+    "Explore all departments, curated collections, and independent maker studios across Oivaly.",
 };
 
 async function CategoriesContent() {

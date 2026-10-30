@@ -35,7 +35,7 @@ export function ShopPolicies({ shopName }: ShopPoliciesProps) {
             Shop & Delivery Policies
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-xl">
-            Orders from {shopName} adhere to Nordic Marketplace standards and Finnish consumer protection regulations.
+            Orders from {shopName} adhere to Oivaly standards and Finnish consumer protection regulations.
           </p>
         </div>
 
@@ -82,12 +82,12 @@ export function ShopPolicies({ shopName }: ShopPoliciesProps) {
               <AccordionTrigger className="text-xs sm:text-sm font-medium py-4 hover:no-underline">
                 <div className="flex items-center gap-2.5 text-left">
                   <ShieldCheckIcon className="size-4 text-primary shrink-0" aria-hidden="true" />
-                  <span>Nordic Marketplace Buyer Protection</span>
+                  <span>Oivaly Buyer Protection</span>
                 </div>
               </AccordionTrigger>
               <AccordionContent className="text-xs text-muted-foreground leading-relaxed pb-4 pt-1 space-y-2">
                 <p>
-                  Every transaction made on Nordic Marketplace is protected by our platform guarantee. In the rare event an item is lost during shipment, arrives damaged, or significantly diverges from the maker&apos;s product specifications, you are eligible for an immediate replacement or full reimbursement.
+                  Every transaction made on Oivaly is protected by our platform guarantee. In the rare event an item is lost during shipment, arrives damaged, or significantly diverges from the maker&apos;s product specifications, you are eligible for an immediate replacement or full reimbursement.
                 </p>
                 <div className="flex items-start gap-2 p-2.5 bg-muted/50 rounded-xs text-[11px] text-muted-foreground mt-2">
                   <InfoIcon className="size-3.5 text-primary shrink-0 mt-0.5" aria-hidden="true" />

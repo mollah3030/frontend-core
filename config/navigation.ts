@@ -1,5 +1,5 @@
 /**
- * Global navigation and category configuration for Nordic Marketplace.
+ * Global navigation and category configuration for Oivaly.
  */
 
 export interface NavCategory {

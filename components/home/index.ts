@@ -1,5 +1,5 @@
 /**
- * Centralized homepage components barrel export for Nordic Marketplace.
+ * Centralized homepage components barrel export for Oivaly.
  */
 
 export * from './home-hero';
