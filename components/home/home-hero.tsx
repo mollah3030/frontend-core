@@ -80,7 +80,7 @@ export function HomeHero({
         aria-hidden="true"
       />
 
-      <div className="relative mx-auto max-w-[1780px] w-full px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
           {/* Left Column: Copy, Search, & Actions */}
           <div className="lg:col-span-6 flex flex-col items-start justify-center text-left">

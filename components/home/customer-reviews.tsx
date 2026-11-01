@@ -45,7 +45,7 @@ export function CustomerReviews({
       aria-labelledby="reviews-heading"
       className="py-14 sm:py-20 bg-background border-b border-border/70"
     >
-      <div className="mx-auto max-w-[1780px] w-full px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-primary block mb-1">

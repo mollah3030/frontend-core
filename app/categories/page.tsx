@@ -40,7 +40,7 @@ function CategoriesSkeleton() {
 export default function CategoriesIndexPage() {
   return (
     <div className="min-h-screen bg-background py-8 sm:py-12">
-      <div className="mx-auto max-w-[1780px] w-full px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Suspense fallback={<CategoriesSkeleton />}>
           <CategoriesContent />
         </Suspense>

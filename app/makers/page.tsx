@@ -157,7 +157,7 @@ export default function MakersDirectoryPage() {
 
   return (
     <div className="min-h-screen bg-background py-8 sm:py-16">
-      <div className="mx-auto max-w-[1780px] w-full px-4 sm:px-6 lg:px-8 space-y-16">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-16">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-muted-foreground">
           <Link href="/" className="hover:text-foreground transition-colors">
@@ -303,9 +303,7 @@ export default function MakersDirectoryPage() {
                         <h3 className="text-base font-serif font-bold text-foreground group-hover:text-primary transition-colors">
                           {maker.name}
                         </h3>
-                        <span title="PRH Verified">
-                          <CheckCircleIcon className="size-3.5 text-emerald-600" weight="fill" />
-                        </span>
+                        <CheckCircleIcon className="size-3.5 text-emerald-600" weight="fill" title="PRH Verified" />
                       </div>
                       <p className="text-[11px] text-muted-foreground font-mono">
                         {maker.legalBusinessName} &bull; Lead: {maker.contactName}

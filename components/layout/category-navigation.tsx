@@ -64,7 +64,7 @@ function CategoryNavigationList({
         className
       )}
     >
-      <div className="mx-auto max-w-[1780px] w-full px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <ul className="flex items-center justify-start gap-3 sm:gap-6 overflow-x-auto py-2.5 scrollbar-none text-xs font-medium">
           {categories.map((cat) => {
             const isActive = pathname === cat.href;
@@ -105,7 +105,7 @@ function CategoryNavigationFallback({
       aria-label="Marketplace categories"
       className={cn("w-full bg-background/95 backdrop-blur-xs", className)}
     >
-      <div className="mx-auto max-w-[1780px] w-full px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <ul className="flex items-center justify-between gap-1 sm:gap-2 overflow-x-auto py-2.5 scrollbar-none text-xs font-medium">
           {categories.map((cat) => (
             <li key={cat.slug} className="shrink-0">

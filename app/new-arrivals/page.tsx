@@ -263,7 +263,7 @@ export default function NewArrivalsPage() {
 
   return (
     <div className="min-h-screen bg-background py-8 sm:py-12">
-      <div className="mx-auto max-w-[1780px] w-full px-4 sm:px-6 lg:px-8 space-y-10">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-10">
         {/* Breadcrumb Navigation */}
         <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-muted-foreground">
           <Link href="/" className="hover:text-foreground transition-colors">

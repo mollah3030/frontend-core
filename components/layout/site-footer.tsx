@@ -23,7 +23,7 @@ export function SiteFooter({ className, ...props }: SiteFooterProps) {
     >
       {/* 1. Nordic Values & Trust Banner */}
       <div className="border-b border-border/50 bg-brand-pale-sage/30 dark:bg-muted/30">
-        <div className="mx-auto max-w-[1780px] w-full px-4 sm:px-6 lg:px-8 py-6">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             <div className="flex items-start gap-3">
               <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-pale-sage text-brand-deep-forest dark:bg-muted dark:text-foreground">
@@ -71,7 +71,7 @@ export function SiteFooter({ className, ...props }: SiteFooterProps) {
       </div>
 
       {/* 2. Main Navigation Links */}
-      <div className="mx-auto max-w-[1780px] w-full px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-5">
           {/* Brand Intro Column */}
           <div className="col-span-2 lg:col-span-1 pr-4">

@@ -20,7 +20,7 @@ export default function TermsOfServicePage() {
 
   return (
     <div className="min-h-screen bg-background py-8 sm:py-16">
-      <div className="mx-auto max-w-[1780px] w-full px-4 sm:px-6 lg:px-8 space-y-12">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 space-y-12">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-muted-foreground print:hidden">
           <Link href="/" className="hover:text-foreground transition-colors">
@@ -32,7 +32,7 @@ export default function TermsOfServicePage() {
 
         {/* Hero & Print Action */}
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 border-b border-border/60 pb-8">
-          <div className="space-y-3 max-w-5xl">
+          <div className="space-y-3 max-w-3xl">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold uppercase tracking-wider bg-brand-pale-sage text-brand-deep-forest dark:bg-muted dark:text-foreground">
               <ScalesIcon className="size-4" weight="fill" />
               <span>Consumer Agreement (B2C)</span>
