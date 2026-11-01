@@ -1,11 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { LeafIcon, ArrowsClockwiseIcon, HandshakeIcon, TreeEvergreenIcon, ShieldCheckIcon } from "@phosphor-icons/react/dist/ssr";
+import {
+  LeafIcon,
+  ArrowsClockwiseIcon,
+  HandshakeIcon,
+  TreeEvergreenIcon,
+  ShieldCheckIcon,
+  SparkleIcon,
+  CheckCircleIcon,
+  DropIcon,
+} from "@phosphor-icons/react/dist/ssr";
 
 export const metadata: Metadata = {
   title: "Sustainability & Ethical Craftsmanship | Oivaly",
   description:
-    "Learn about Oivaly's commitment to plastic-free packaging, circular Posti logistics, natural Nordic materials, and fair compensation for independent makers.",
+    "Explore Oivaly's ecological manifesto: natural Nordic raw materials, 100% plastic-free packaging, circular Posti logistics, and 90% direct payouts to creators.",
 };
 
 export default function SustainabilityPage() {
@@ -21,120 +30,137 @@ export default function SustainabilityPage() {
           <span className="text-foreground font-medium">Sustainability</span>
         </nav>
 
-        {/* Hero Header */}
+        {/* Hero */}
         <div className="space-y-4 max-w-3xl">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold uppercase tracking-wider bg-brand-pale-sage text-brand-deep-forest dark:bg-muted dark:text-foreground">
             <LeafIcon className="size-4" weight="fill" />
-            <span>The Oivaly Ecological Manifesto</span>
+            <span>The Oivaly Ecological Charter &bull; 2026</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-serif font-bold text-foreground tracking-tight leading-tight">
+          <h1 className="text-3xl sm:text-6xl font-serif font-bold text-foreground tracking-tight leading-tight">
             Crafted for Generations, Not Landfills.
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-            In an era of mass-produced disposable goods, Oivaly is built on the centuries-old Nordic philosophy of <em className="font-serif">kestävyys</em> — durability, restraint, and profound respect for our natural environment.
+            In an era of mass-produced, petroleum-derived disposable items, Oivaly is anchored in the traditional Nordic philosophy of <strong className="text-foreground font-serif">kestävyys</strong> — longevity, ecological restraint, and profound respect for living natural materials.
           </p>
         </div>
 
-        {/* Four Sustainability Pillars */}
+        {/* 4 Pillars Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="p-6 bg-card border border-border/80 space-y-3">
-            <div className="size-11 rounded-full bg-brand-pale-sage/60 dark:bg-muted text-brand-deep-forest dark:text-foreground flex items-center justify-center">
+          <div className="p-8 bg-card border border-border/80 space-y-3">
+            <div className="size-12 rounded-full bg-brand-pale-sage text-brand-deep-forest dark:bg-muted dark:text-foreground flex items-center justify-center">
               <TreeEvergreenIcon className="size-6" weight="fill" />
             </div>
-            <h3 className="text-lg font-serif font-bold text-foreground">
-              1. Renewable & Regional Materials
-            </h3>
+            <h2 className="text-lg font-serif font-bold text-foreground">
+              1. Renewable Regional Raw Materials
+            </h2>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Our artisans work primarily with native Scandinavian raw materials: fallen curly birch and kelo pine from certified Finnish forests, unbleached Baltic flax linen, natural stoneware clay, and organic sheep wool from small Nordic farms.
+              Our artisans work exclusively with traceable Scandinavian materials: PEFC-certified curly birch and slow-grown kelo pine from Finnish boreal forests, unbleached Baltic flax linen, natural stoneware clay, and organic sheep wool from local farms. We disallow petroleum-based synthetic resins and disposable virgin plastics.
             </p>
           </div>
 
-          <div className="p-6 bg-card border border-border/80 space-y-3">
-            <div className="size-11 rounded-full bg-brand-pale-sage/60 dark:bg-muted text-brand-deep-forest dark:text-foreground flex items-center justify-center">
+          <div className="p-8 bg-card border border-border/80 space-y-3">
+            <div className="size-12 rounded-full bg-brand-pale-sage text-brand-deep-forest dark:bg-muted dark:text-foreground flex items-center justify-center">
               <ArrowsClockwiseIcon className="size-6" weight="bold" />
             </div>
-            <h3 className="text-lg font-serif font-bold text-foreground">
+            <h2 className="text-lg font-serif font-bold text-foreground">
               2. 100% Plastic-Free Studio Packaging
-            </h3>
+            </h2>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Every seller on Oivaly adheres to our zero-plastic packaging mandate. Orders are safeguarded in recycled corrugated cardboard, unbleached kraft paper, biodegradable wood shavings, and water-activated paper tape.
+              Every seller on Oivaly adheres to our zero-plastic packaging standard. Delicate ceramics and glassware are cushioned in biodegradable unbleached kraft honeycomb wrap, recycled paper fill, and sealed with water-activated paper gum tape. 100% curbside recyclable throughout Europe.
             </p>
           </div>
 
-          <div className="p-6 bg-card border border-border/80 space-y-3">
-            <div className="size-11 rounded-full bg-brand-pale-sage/60 dark:bg-muted text-brand-deep-forest dark:text-foreground flex items-center justify-center">
+          <div className="p-8 bg-card border border-border/80 space-y-3">
+            <div className="size-12 rounded-full bg-brand-pale-sage text-brand-deep-forest dark:bg-muted dark:text-foreground flex items-center justify-center">
               <HandshakeIcon className="size-6" weight="fill" />
             </div>
-            <h3 className="text-lg font-serif font-bold text-foreground">
-              3. Fair Artisan Compensation (90% Direct)
-            </h3>
+            <h2 className="text-lg font-serif font-bold text-foreground">
+              3. Living Artisan Wages (90% Direct)
+            </h2>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Unlike traditional retail markups that take 50% to 70% of a maker&apos;s price, Oivaly operates on a modest 10% platform fee. 90% of every purchase goes directly into the creator&apos;s workshop to support living artisan wages in local communities.
+              Mainstream commercial retail markups typically claim 50% to 75% of an artisan&apos;s product price. Oivaly operates with a transparent 10% platform fee, returning 90% of every euro directly to the maker&apos;s studio to sustain regional craft guilds and rural workshops.
             </p>
           </div>
 
-          <div className="p-6 bg-card border border-border/80 space-y-3">
-            <div className="size-11 rounded-full bg-brand-pale-sage/60 dark:bg-muted text-brand-deep-forest dark:text-foreground flex items-center justify-center">
+          <div className="p-8 bg-card border border-border/80 space-y-3">
+            <div className="size-12 rounded-full bg-brand-pale-sage text-brand-deep-forest dark:bg-muted dark:text-foreground flex items-center justify-center">
               <ShieldCheckIcon className="size-6" weight="fill" />
             </div>
-            <h3 className="text-lg font-serif font-bold text-foreground">
+            <h2 className="text-lg font-serif font-bold text-foreground">
               4. Carbon-Smart Posti Delivery
-            </h3>
+            </h2>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              By partnering with Posti Finland, our logistics utilize renewable biofuel vehicle fleets and widespread automated parcel locker networks (SmartPost), reducing last-mile carbon emissions by up to 40% compared to traditional couriers.
+              By partnering with Posti Finland, parcels move through high-efficiency smart locker networks (SmartPost) and renewable electric/biofuel transport fleets. Pickups from local lockers reduce last-mile courier carbon emissions by up to 40% across Finnish municipalities.
             </p>
           </div>
         </div>
 
-        {/* Deep Dive: The Materials We Stand Behind */}
-        <div className="space-y-6 border-t border-border/60 pt-10">
-          <h2 className="text-2xl font-serif font-bold text-foreground">
-            Our Material Standards
-          </h2>
+        {/* Detailed Material Standards Matrix */}
+        <div className="space-y-6">
+          <div className="border-b border-border/60 pb-3">
+            <h2 className="text-2xl font-serif font-bold text-foreground">
+              Our Material Standards & Traceability
+            </h2>
+            <p className="text-xs text-muted-foreground">What goes into the handcrafted pieces offered on Oivaly.</p>
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs">
-            <div className="space-y-2 p-4 bg-muted/20 border border-border/60">
-              <span className="font-bold text-foreground uppercase tracking-wider text-[11px] block">Nordic Timbers</span>
-              <p className="text-muted-foreground leading-relaxed">
-                PEFC and FSC-certified birch, pine, and alder. No toxic polyurethane varnishes; only cold-pressed linseed oil, natural beeswax, and sauna paraffin.
-              </p>
-            </div>
-
-            <div className="space-y-2 p-4 bg-muted/20 border border-border/60">
-              <span className="font-bold text-foreground uppercase tracking-wider text-[11px] block">Ceramics & Glazes</span>
-              <p className="text-muted-foreground leading-relaxed">
-                Fired to stoneware maturity (1220°C+) for dishwasher longevity. All food-contact glazes are 100% lead and cadmium free.
-              </p>
-            </div>
-
-            <div className="space-y-2 p-4 bg-muted/20 border border-border/60">
-              <span className="font-bold text-foreground uppercase tracking-wider text-[11px] block">Textiles & Fibers</span>
-              <p className="text-muted-foreground leading-relaxed">
-                OEKO-TEX certified European linen and GOTS organic cotton. Naturally breathable, anti-bacterial, and biodegradable.
-              </p>
+          <div className="border border-border/80 bg-card overflow-hidden text-xs">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead className="bg-muted/40 border-b border-border/80 text-foreground font-semibold uppercase tracking-wider text-[10px]">
+                  <tr>
+                    <th className="p-3.5">Material</th>
+                    <th className="p-3.5">Approved Provenance</th>
+                    <th className="p-3.5">Prohibited In Studio</th>
+                    <th className="p-3.5">Longevity Life</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/60">
+                  <tr>
+                    <td className="p-3.5 font-bold text-foreground">Nordic Birch & Pine</td>
+                    <td className="p-3.5 text-muted-foreground">PEFC/FSC certified Finnish forests, storm-fallen kelo wood</td>
+                    <td className="p-3.5 text-rose-600 dark:text-rose-400">Polyurethane varnishes, chemical wood preservatives</td>
+                    <td className="p-3.5 font-medium text-foreground">50+ Years (Heirloom)</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3.5 font-bold text-foreground">Studio Ceramics</td>
+                    <td className="p-3.5 text-muted-foreground">High-fire stoneware (1220°C+), riverbed Finnish clays</td>
+                    <td className="p-3.5 text-rose-600 dark:text-rose-400">Lead, cadmium, or food-unsafe glazes</td>
+                    <td className="p-3.5 font-medium text-foreground">Generations</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3.5 font-bold text-foreground">Flax Linen & Wool</td>
+                    <td className="p-3.5 text-muted-foreground">OEKO-TEX certified Baltic linen, unbleached virgin sheep wool</td>
+                    <td className="p-3.5 text-rose-600 dark:text-rose-400">Polyester blends, acrylic fibers, microplastics</td>
+                    <td className="p-3.5 font-medium text-foreground">20+ Years (Softens over time)</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3.5 font-bold text-foreground">Artisan Metals</td>
+                    <td className="p-3.5 text-muted-foreground">100% recycled 925 sterling silver, solid brass, Nordic sea amber</td>
+                    <td className="p-3.5 text-rose-600 dark:text-rose-400">Nickel alloys, mystery plated pot-metal</td>
+                    <td className="p-3.5 font-medium text-foreground">Indefinite (Recyclable)</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
 
-        {/* CTA */}
-        <div className="p-8 sm:p-10 bg-brand-pale-sage/30 dark:bg-muted/30 border border-border/80 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
-          <div className="space-y-1">
-            <h3 className="text-lg font-serif font-bold text-foreground">
-              Support Sustainable Nordic Craft
-            </h3>
-            <p className="text-xs text-muted-foreground">
-              Every order makes a tangible difference to independent workshops.
-            </p>
+        {/* Circular Economy Impact Callout */}
+        <div className="border border-border/80 bg-brand-warm-ivory dark:bg-card p-8 sm:p-12 space-y-4">
+          <h3 className="text-xl font-serif font-bold text-foreground">
+            Repair, Restore & Cherish
+          </h3>
+          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-3xl">
+            In traditional Finnish households, a well-made kuksa or wool throw is never discarded when aged. Wooden pieces are re-oiled with cold-pressed linseed; linen is re-stitched with sashiko-style darning; ceramic chips are sealed with natural pine gum. Our makers offer lifetime repair advice for all original creations.
+          </p>
+          <div className="pt-2 flex flex-wrap gap-4 text-xs font-semibold text-primary">
+            <Link href="/categories" className="hover:underline">Browse Natural Materials &rarr;</Link>
+            <Link href="/makers" className="hover:underline">Meet the Regional Guilds &rarr;</Link>
+            <Link href="/shipping" className="hover:underline">Learn About Posti SmartPost &rarr;</Link>
           </div>
-          <Link
-            href="/categories"
-            className="px-6 py-3 bg-brand-deep-forest text-white text-xs font-semibold uppercase tracking-wider hover:bg-brand-deep-forest/90 transition-colors"
-          >
-            Explore Sustainable Catalog
-          </Link>
         </div>
       </div>
     </div>
   );
 }
-
