@@ -191,7 +191,7 @@ export default function GiftsPage() {
 
   return (
     <div className="min-h-screen bg-background py-8 sm:py-16">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-16">
+      <div className="mx-auto max-w-[1780px] w-full px-4 sm:px-6 lg:px-8 space-y-16">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-muted-foreground">
           <Link href="/" className="hover:text-foreground transition-colors">
@@ -202,7 +202,7 @@ export default function GiftsPage() {
         </nav>
 
         {/* Hero Banner */}
-        <div className="border border-border/80 bg-brand-warm-ivory dark:bg-card p-6 sm:p-14 text-center max-w-4xl mx-auto space-y-5 relative">
+        <div className="border border-border/80 bg-brand-warm-ivory dark:bg-card p-6 sm:p-14 text-center w-full space-y-5 relative">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold uppercase tracking-wider bg-brand-pale-sage text-brand-deep-forest dark:bg-muted dark:text-foreground">
             <GiftIcon className="size-4" weight="fill" />
             <span>The Nordic Artisan Gift Guide &bull; Season 2026</span>

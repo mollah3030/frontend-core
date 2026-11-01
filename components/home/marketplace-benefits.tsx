@@ -39,7 +39,7 @@ export function MarketplaceBenefits() {
       aria-labelledby="benefits-heading"
       className="py-12 sm:py-16 bg-brand-warm-ivory/60 dark:bg-card/20 border-b border-border/70"
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1780px] w-full px-4 sm:px-6 lg:px-8">
         <h2 id="benefits-heading" className="sr-only">
           Marketplace Trust and Customer Principles
         </h2>

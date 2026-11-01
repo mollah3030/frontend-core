@@ -69,7 +69,7 @@ export default function AboutUsPage() {
 
   return (
     <div className="min-h-screen bg-background py-8 sm:py-16">
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 space-y-16">
+      <div className="mx-auto max-w-[1780px] w-full px-4 sm:px-6 lg:px-8 space-y-16">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-muted-foreground">
           <Link href="/" className="hover:text-foreground transition-colors">
@@ -80,7 +80,7 @@ export default function AboutUsPage() {
         </nav>
 
         {/* Hero Section */}
-        <div className="space-y-4 max-w-3xl">
+        <div className="space-y-4 max-w-5xl">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold uppercase tracking-wider bg-brand-pale-sage text-brand-deep-forest dark:bg-muted dark:text-foreground">
             <GlobeIcon className="size-4" weight="fill" />
             <span>Rooted in Helsinki, Finland</span>

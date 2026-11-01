@@ -68,7 +68,7 @@ export default function BuyerProtectionPage() {
 
   return (
     <div className="min-h-screen bg-background py-8 sm:py-16">
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 space-y-16">
+      <div className="mx-auto max-w-[1780px] w-full px-4 sm:px-6 lg:px-8 space-y-16">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-muted-foreground">
           <Link href="/" className="hover:text-foreground transition-colors">
@@ -87,7 +87,7 @@ export default function BuyerProtectionPage() {
           <h1 className="text-3xl sm:text-5xl font-serif font-bold text-foreground tracking-tight">
             The Oivaly Buyer Protection Guarantee
           </h1>
-          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-3xl">
+          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-5xl">
             When you purchase handmade Nordic goods on Oivaly, your transaction is safeguarded at every milestone. By combining <strong>PRH-verified Finnish business registries</strong>, <strong>bank-level 14-day escrow payment protection</strong>, and <strong>official Posti barcode tracking</strong>, we ensure you never bear financial risk when supporting independent artisans.
           </p>
         </div>

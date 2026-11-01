@@ -96,7 +96,7 @@ export function CategoryDiscovery({
       aria-labelledby="categories-heading"
       className="py-12 sm:py-16 bg-background border-b border-border/70"
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1780px] w-full px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 gap-4">
           <div>
@@ -174,7 +174,7 @@ export function CategoryDiscoverySkeleton() {
       aria-label="Loading categories"
       className="py-12 sm:py-16 bg-background border-b border-border/70"
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1780px] w-full px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 gap-4">
           <div className="space-y-2">
             <div className="h-3 w-28 bg-muted rounded-full animate-pulse" />

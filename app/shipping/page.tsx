@@ -135,7 +135,7 @@ export default function ShippingPage() {
 
   return (
     <div className="min-h-screen bg-background py-8 sm:py-16">
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 space-y-16">
+      <div className="mx-auto max-w-[1780px] w-full px-4 sm:px-6 lg:px-8 space-y-16">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-muted-foreground">
           <Link href="/" className="hover:text-foreground transition-colors">
@@ -154,7 +154,7 @@ export default function ShippingPage() {
           <h1 className="text-3xl sm:text-5xl font-serif font-bold text-foreground tracking-tight">
             Shipping & Posti Delivery
           </h1>
-          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-3xl">
+          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-5xl">
             We partner with <strong>Posti Group Oyj</strong>, Finland&apos;s national postal service, to provide transparent, carbon-compensated deliveries directly from independent maker studios to over 3,000 automated SmartPost lockers, local pickup points, and doorsteps across Finland and Europe.
           </p>
         </div>

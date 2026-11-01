@@ -42,7 +42,7 @@ export function AnnouncementBar({
       )}
       {...props}
     >
-      <div className="mx-auto max-w-7xl flex items-center justify-center text-center pr-7 sm:pr-0">
+      <div className="mx-auto max-w-[1780px] w-full flex items-center justify-center text-center pr-7 sm:pr-0">
         <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 text-[11px] sm:text-xs font-normal tracking-tight">
           <SparkleIcon className="size-3 text-brand-pale-sage hidden sm:inline shrink-0" weight="fill" aria-hidden="true" />
           <span className="font-medium text-white dark:text-foreground">{message}</span>

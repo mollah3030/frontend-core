@@ -57,7 +57,7 @@ export function SiteHeader({
 
       {/* 2. Main Sticky Header Bar */}
       <div className="sticky top-0 z-40 w-full border-b border-border/80 bg-background/95 backdrop-blur-md transition-shadow">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-[1780px] w-full px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 sm:h-18 items-center justify-between gap-3 sm:gap-6">
             {/* Mobile Menu Trigger & Wordmark */}
             <div className="flex items-center gap-2 sm:gap-3">
@@ -83,7 +83,7 @@ export function SiteHeader({
             </div>
 
             {/* Prominent Center Search Bar (Desktop) */}
-            <div className="hidden lg:flex flex-1 max-w-2xl mx-4">
+            <div className="hidden lg:flex flex-1 max-w-3xl mx-4">
               <SearchBar placeholder={HEADER_NAV_CONFIG.searchPlaceholder} />
             </div>
 

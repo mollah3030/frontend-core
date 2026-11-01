@@ -73,7 +73,7 @@ export function FeaturedSellers({
       aria-labelledby="makers-heading"
       className="py-14 sm:py-20 bg-background border-b border-border/70 scroll-mt-16"
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1780px] w-full px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 gap-4">
           <div>

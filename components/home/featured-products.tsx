@@ -104,7 +104,7 @@ export function FeaturedProducts({
       aria-labelledby="featured-products-heading"
       className="py-14 sm:py-20 bg-background border-b border-border/70"
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1780px] w-full px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-10 gap-4">
           <div>
@@ -202,7 +202,7 @@ export function FeaturedProducts({
 export function FeaturedProductsSkeleton() {
   return (
     <section className="py-14 sm:py-20 bg-background border-b border-border/70 animate-pulse">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1780px] w-full px-4 sm:px-6 lg:px-8">
         <div className="mb-8 sm:mb-12">
           <div className="h-3 w-28 bg-muted mb-2 rounded-sm" />
           <div className="h-8 w-64 bg-muted mb-2 rounded-sm" />

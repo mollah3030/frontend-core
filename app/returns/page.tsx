@@ -73,7 +73,7 @@ export default function ReturnsPage() {
 
   return (
     <div className="min-h-screen bg-background py-8 sm:py-16">
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 space-y-16">
+      <div className="mx-auto max-w-[1780px] w-full px-4 sm:px-6 lg:px-8 space-y-16">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-muted-foreground">
           <Link href="/" className="hover:text-foreground transition-colors">
@@ -92,7 +92,7 @@ export default function ReturnsPage() {
           <h1 className="text-3xl sm:text-5xl font-serif font-bold text-foreground tracking-tight">
             Returns, Exchanges & Refunds
           </h1>
-          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-3xl">
+          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-5xl">
             We hold all artisan pieces to extraordinary standards of quality. In accordance with the <strong>Finnish Consumer Protection Act (Kuluttajansuojalaki 38/1978, Chapter 6)</strong> and EU Directive 2011/83/EU, you enjoy a guaranteed <strong>14-day statutory right of withdrawal</strong> from the date your Posti parcel arrives.
           </p>
         </div>
