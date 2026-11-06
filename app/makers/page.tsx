@@ -201,51 +201,46 @@ export default function MakersDirectoryPage() {
             <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs">
               <button
                 onClick={() => setSelectedRegion("all")}
-                className={`px-3.5 py-1.5 border transition-all cursor-pointer whitespace-nowrap ${
-                  selectedRegion === "all"
+                className={`px-3.5 py-1.5 border transition-all cursor-pointer whitespace-nowrap ${selectedRegion === "all"
                     ? "bg-brand-deep-forest text-white border-brand-deep-forest font-semibold"
                     : "bg-card border-border/80 text-muted-foreground hover:text-foreground"
-                }`}
+                  }`}
               >
                 All Regions ({MAKERS_DIRECTORY.length})
               </button>
               <button
                 onClick={() => setSelectedRegion("helsinki")}
-                className={`px-3.5 py-1.5 border transition-all cursor-pointer whitespace-nowrap ${
-                  selectedRegion === "helsinki"
+                className={`px-3.5 py-1.5 border transition-all cursor-pointer whitespace-nowrap ${selectedRegion === "helsinki"
                     ? "bg-brand-deep-forest text-white border-brand-deep-forest font-semibold"
                     : "bg-card border-border/80 text-muted-foreground hover:text-foreground"
-                }`}
+                  }`}
               >
                 Helsinki & Uusimaa
               </button>
               <button
                 onClick={() => setSelectedRegion("lapland")}
-                className={`px-3.5 py-1.5 border transition-all cursor-pointer whitespace-nowrap ${
-                  selectedRegion === "lapland"
+                className={`px-3.5 py-1.5 border transition-all cursor-pointer whitespace-nowrap ${selectedRegion === "lapland"
                     ? "bg-brand-deep-forest text-white border-brand-deep-forest font-semibold"
                     : "bg-card border-border/80 text-muted-foreground hover:text-foreground"
-                }`}
+                  }`}
               >
                 Lapland & North
               </button>
               <button
                 onClick={() => setSelectedRegion("lakeland")}
-                className={`px-3.5 py-1.5 border transition-all cursor-pointer whitespace-nowrap ${
-                  selectedRegion === "lakeland"
+                className={`px-3.5 py-1.5 border transition-all cursor-pointer whitespace-nowrap ${selectedRegion === "lakeland"
                     ? "bg-brand-deep-forest text-white border-brand-deep-forest font-semibold"
                     : "bg-card border-border/80 text-muted-foreground hover:text-foreground"
-                }`}
+                  }`}
               >
                 Lakeland & East
               </button>
               <button
                 onClick={() => setSelectedRegion("archipelago")}
-                className={`px-3.5 py-1.5 border transition-all cursor-pointer whitespace-nowrap ${
-                  selectedRegion === "archipelago"
+                className={`px-3.5 py-1.5 border transition-all cursor-pointer whitespace-nowrap ${selectedRegion === "archipelago"
                     ? "bg-brand-deep-forest text-white border-brand-deep-forest font-semibold"
                     : "bg-card border-border/80 text-muted-foreground hover:text-foreground"
-                }`}
+                  }`}
               >
                 Turku & Archipelago
               </button>
@@ -284,7 +279,7 @@ export default function MakersDirectoryPage() {
                       className="object-cover group-hover:scale-103 transition-transform duration-300"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-                    
+
                     {/* Location Badge */}
                     <div className="absolute bottom-3 left-3 flex items-center gap-1.5 text-xs font-semibold text-white drop-shadow-sm">
                       <MapPinIcon className="size-3.5 text-brand-sage" weight="fill" />
@@ -303,7 +298,7 @@ export default function MakersDirectoryPage() {
                         <h3 className="text-base font-serif font-bold text-foreground group-hover:text-primary transition-colors">
                           {maker.name}
                         </h3>
-                        <CheckCircleIcon className="size-3.5 text-emerald-600" weight="fill" title="PRH Verified" />
+                        <CheckCircleIcon className="size-3.5 text-emerald-600" weight="fill" />
                       </div>
                       <p className="text-[11px] text-muted-foreground font-mono">
                         {maker.legalBusinessName} &bull; Lead: {maker.contactName}
