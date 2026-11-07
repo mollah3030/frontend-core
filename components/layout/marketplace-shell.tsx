@@ -9,16 +9,40 @@ export interface MarketplaceShellProps {
   children: React.ReactNode;
 }
 
+function isBareLayoutRoute(pathname: string | null): boolean {
+  if (!pathname) return false;
+
+  // Dedicated seller atelier routes
+  if (
+    pathname.startsWith("/seller") ||
+    pathname === "/sell" ||
+    pathname.startsWith("/sell/")
+  ) {
+    return true;
+  }
+
+  // Customer authentication and account recovery routes
+  if (
+    pathname === "/login" ||
+    pathname.startsWith("/login/") ||
+    pathname === "/register" ||
+    pathname.startsWith("/register/") ||
+    pathname === "/forgot-password" ||
+    pathname.startsWith("/forgot-password/") ||
+    pathname === "/reset-password" ||
+    pathname.startsWith("/reset-password/") ||
+    pathname === "/verify-email" ||
+    pathname.startsWith("/verify-email/")
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
 function ConditionalHeader() {
   const pathname = usePathname();
-  const isSellerRoute = Boolean(
-    pathname &&
-      (pathname.startsWith("/seller") ||
-        pathname === "/sell" ||
-        pathname.startsWith("/sell/"))
-  );
-
-  if (isSellerRoute) {
+  if (isBareLayoutRoute(pathname)) {
     return null;
   }
 
@@ -27,14 +51,7 @@ function ConditionalHeader() {
 
 function ConditionalFooter() {
   const pathname = usePathname();
-  const isSellerRoute = Boolean(
-    pathname &&
-      (pathname.startsWith("/seller") ||
-        pathname === "/sell" ||
-        pathname.startsWith("/sell/"))
-  );
-
-  if (isSellerRoute) {
+  if (isBareLayoutRoute(pathname)) {
     return null;
   }
 
@@ -43,8 +60,9 @@ function ConditionalFooter() {
 
 /**
  * Shell wrapper that conditionally renders customer header and footer.
- * On dedicated seller routes (/seller/*, /sell), customer header and footer
- * are omitted to present a focused, high-end seller atelier experience.
+ * On dedicated seller routes (/seller/*, /sell) and authentication routes
+ * (/login, /register, etc.), customer header and footer are omitted to
+ * present a focused, high-end full-bleed experience.
  *
  * Header and footer are wrapped in Suspense so usePathname() does not
  * block root prerendering on dynamic routes like /products/[slug].
@@ -52,13 +70,13 @@ function ConditionalFooter() {
 export function MarketplaceShell({ children }: MarketplaceShellProps) {
   return (
     <>
-      <React.Suspense fallback={<SiteHeader />}>
+      <React.Suspense fallback={null}>
         <ConditionalHeader />
       </React.Suspense>
       <main id="main-content" className="flex-1 flex flex-col">
         {children}
       </main>
-      <React.Suspense fallback={<SiteFooter />}>
+      <React.Suspense fallback={null}>
         <ConditionalFooter />
       </React.Suspense>
     </>

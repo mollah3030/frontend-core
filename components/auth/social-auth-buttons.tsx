@@ -9,14 +9,14 @@ export function SocialAuthButtons({ actionText = "register" }: { actionText?: "r
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pt-2">
       {/* Divider */}
       <div className="relative my-4 text-center">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-white/10" />
+          <div className="w-full border-t border-border" />
         </div>
         <div className="relative flex justify-center text-xs">
-          <span className="bg-[#252230] px-3 text-zinc-400">
+          <span className="bg-background px-3 text-muted-foreground font-medium">
             Or {actionText} with
           </span>
         </div>
@@ -28,7 +28,7 @@ export function SocialAuthButtons({ actionText = "register" }: { actionText?: "r
         <button
           type="button"
           onClick={() => handleSocialClick("Google")}
-          className="h-11 rounded-xl border border-white/15 bg-white/[0.03] hover:bg-white/[0.08] active:scale-[0.98] text-white text-xs sm:text-sm font-medium flex items-center justify-center gap-2.5 transition-all"
+          className="h-10 rounded-none border border-border bg-background hover:bg-muted/60 active:scale-[0.99] text-foreground text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer"
         >
           {/* Authentic Google "G" SVG */}
           <svg className="size-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
@@ -56,10 +56,10 @@ export function SocialAuthButtons({ actionText = "register" }: { actionText?: "r
         <button
           type="button"
           onClick={() => handleSocialClick("Apple")}
-          className="h-11 rounded-xl border border-white/15 bg-white/[0.03] hover:bg-white/[0.08] active:scale-[0.98] text-white text-xs sm:text-sm font-medium flex items-center justify-center gap-2.5 transition-all"
+          className="h-10 rounded-none border border-border bg-background hover:bg-muted/60 active:scale-[0.99] text-foreground text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer"
         >
           {/* Authentic Apple SVG */}
-          <svg className="size-4 shrink-0 fill-current text-white" viewBox="0 0 24 24" aria-hidden="true">
+          <svg className="size-4 shrink-0 fill-current text-foreground" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.93-2.85-.9.04-2 .6-2.65 1.35-.58.66-1.09 1.73-.95 2.76.99.08 2.05-.51 2.67-1.26z" />
           </svg>
           <span>Apple</span>
