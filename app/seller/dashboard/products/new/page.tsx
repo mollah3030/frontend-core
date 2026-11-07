@@ -15,6 +15,9 @@ import {
   TrashIcon,
   PlusIcon,
   InfoIcon,
+  SlidersHorizontalIcon,
+  ListBulletsIcon,
+  PencilSimpleLineIcon,
 } from "@phosphor-icons/react";
 import { useSellerAuth } from "@/lib/seller-auth-context";
 import { sellerDashboardApi } from "@/resources/apis/seller-dashboard.api";
@@ -23,11 +26,56 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 interface VariantFormItem {
+  id?: string;
   size?: string;
   color?: string;
+  model?: string;
+  attributeKey?: string;
+  attributeValue?: string;
   sku?: string;
   price?: number;
   stockQuantity: number;
+  lowStockThreshold?: number;
+}
+
+function formatProductDescription(
+  cleanDesc: string,
+  specs: {
+    materials?: string;
+    dimensions?: string;
+    careInstructions?: string;
+    origin?: string;
+    allowPersonalization?: boolean;
+    personalizationPrompt?: string;
+  }
+) {
+  const parts: string[] = [];
+  if (cleanDesc.trim()) {
+    parts.push(cleanDesc.trim());
+  }
+
+  const specLines: string[] = [];
+  if (specs.materials?.trim()) {
+    specLines.push(`- **Materials:** ${specs.materials.trim()}`);
+  }
+  if (specs.dimensions?.trim()) {
+    specLines.push(`- **Dimensions:** ${specs.dimensions.trim()}`);
+  }
+  if (specs.careInstructions?.trim()) {
+    specLines.push(`- **Care Instructions:** ${specs.careInstructions.trim()}`);
+  }
+  if (specs.origin?.trim()) {
+    specLines.push(`- **Workshop Origin:** ${specs.origin.trim()}`);
+  }
+  if (specs.allowPersonalization && specs.personalizationPrompt?.trim()) {
+    specLines.push(`- **Personalization Instructions:** ${specs.personalizationPrompt.trim()}`);
+  }
+
+  if (specLines.length > 0) {
+    parts.push(`### Specifications\n${specLines.join("\n")}`);
+  }
+
+  return parts.join("\n\n");
 }
 
 export default function NewProductPage() {
@@ -50,17 +98,31 @@ export default function NewProductPage() {
   const [stockQuantity, setStockQuantity] = React.useState<number>(10);
   const [lowStockThreshold, setLowStockThreshold] = React.useState<number>(3);
 
+  // Specifications
+  const [materials, setMaterials] = React.useState("");
+  const [dimensions, setDimensions] = React.useState("");
+  const [careInstructions, setCareInstructions] = React.useState("");
+  const [origin, setOrigin] = React.useState(
+    store && "address" in store ? (store as unknown as { address?: string }).address || "Aleksanterinkatu 15, 00100 Helsinki, Finland" : "Aleksanterinkatu 15, 00100 Helsinki, Finland"
+  );
+
+  // Etsy-Style Buyer Personalization
+  const [allowPersonalization, setAllowPersonalization] = React.useState(false);
+  const [personalizationPrompt, setPersonalizationPrompt] = React.useState(
+    "Enter custom engraving, monogram, or gift message instructions (max 30 characters):"
+  );
+
   // Images state
   const [imageUrl, setImageUrl] = React.useState("");
   const [images, setImages] = React.useState<Array<{ url: string; altText?: string; isPrimary: boolean }>>([
     {
       url: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=800&q=80",
-      altText: "Handcrafted Nordic product photo",
+      altText: "Handcrafted artisan product photo",
       isPrimary: true,
     },
   ]);
 
-  // Variants state (optional)
+  // Variants state (multi-dimensional options)
   const [showVariants, setShowVariants] = React.useState(false);
   const [variants, setVariants] = React.useState<VariantFormItem[]>([]);
 
@@ -77,7 +139,7 @@ export default function NewProductPage() {
         // Fallback demo categories
         setCategories([
           { id: "c1", name: "Handmade & Crafts", slug: "crafts" },
-          { id: "c2", name: "Nordic Home & Living", slug: "home" },
+          { id: "c2", name: "Oivaly Home & Living", slug: "home" },
           { id: "c3", name: "Finnish Design & Art", slug: "design" },
         ]);
       }
@@ -87,7 +149,7 @@ export default function NewProductPage() {
 
   // Quick SKU generator
   const handleGenerateSku = () => {
-    const prefix = name ? name.slice(0, 3).toUpperCase() : "NDK";
+    const prefix = name ? name.slice(0, 3).toUpperCase() : "OIV";
     const randomNum = Math.floor(1000 + Math.random() * 9000);
     setSku(`${prefix}-${randomNum}`);
     toast.info("Generated SKU code");
@@ -132,18 +194,148 @@ export default function NewProductPage() {
     );
   };
 
+  // Presets for Variants
+  const handleApplyCeramicsPreset = () => {
+    const baseP = Number(price) || 38;
+    const baseSku = sku || "CRM";
+    setShowVariants(true);
+    setVariants([
+      {
+        size: "Set of 2",
+        color: "Sandstone White",
+        sku: `${baseSku}-S2-WHT`,
+        price: baseP,
+        stockQuantity: 10,
+        lowStockThreshold: 3,
+      },
+      {
+        size: "Set of 4",
+        color: "Sandstone White",
+        sku: `${baseSku}-S4-WHT`,
+        price: Math.round(baseP * 1.85),
+        stockQuantity: 8,
+        lowStockThreshold: 2,
+      },
+      {
+        size: "Set of 6",
+        color: "Sandstone White",
+        sku: `${baseSku}-S6-WHT`,
+        price: Math.round(baseP * 2.65),
+        stockQuantity: 4,
+        lowStockThreshold: 2,
+      },
+      {
+        size: "Set of 2",
+        color: "Nordic Sage",
+        sku: `${baseSku}-S2-SGE`,
+        price: baseP,
+        stockQuantity: 6,
+        lowStockThreshold: 2,
+      },
+      {
+        size: "Set of 4",
+        color: "Nordic Sage",
+        sku: `${baseSku}-S4-SGE`,
+        price: Math.round(baseP * 1.85),
+        stockQuantity: 5,
+        lowStockThreshold: 2,
+      },
+    ]);
+    if (!materials) setMaterials("High-fire stoneware clay, non-toxic food-safe mineral glaze");
+    if (!dimensions) setDimensions("Ø 9.5 cm × H 5.2 cm (Volume: ~220 ml / 7.5 oz)");
+    if (!careInstructions) setCareInstructions("Oven safe to 250°C (480°F), microwave & dishwasher safe. Avoid sudden thermal shocks.");
+    toast.success("Applied Ceramics & Tableware options preset");
+  };
+
+  const handleApplyTechPreset = () => {
+    const baseP = Number(price) || 799;
+    const baseSku = sku || "TECH";
+    setShowVariants(true);
+    setVariants([
+      {
+        size: "128GB",
+        color: "Space Black",
+        model: "128GB",
+        sku: `${baseSku}-128-BLK`,
+        price: baseP,
+        stockQuantity: 8,
+        lowStockThreshold: 2,
+      },
+      {
+        size: "256GB",
+        color: "Space Black",
+        model: "256GB",
+        sku: `${baseSku}-256-BLK`,
+        price: baseP + 120,
+        stockQuantity: 5,
+        lowStockThreshold: 2,
+      },
+      {
+        size: "512GB",
+        color: "Space Black",
+        model: "512GB",
+        sku: `${baseSku}-512-BLK`,
+        price: baseP + 260,
+        stockQuantity: 3,
+        lowStockThreshold: 2,
+      },
+      {
+        size: "128GB",
+        color: "Natural Titanium",
+        model: "128GB",
+        sku: `${baseSku}-128-TIT`,
+        price: baseP,
+        stockQuantity: 6,
+        lowStockThreshold: 2,
+      },
+      {
+        size: "256GB",
+        color: "Natural Titanium",
+        model: "256GB",
+        sku: `${baseSku}-256-TIT`,
+        price: baseP + 120,
+        stockQuantity: 4,
+        lowStockThreshold: 2,
+      },
+    ]);
+    if (!materials) setMaterials("Aerospace-grade Aluminum, Ceramic Shield front, textured matte glass back");
+    if (!dimensions) setDimensions("147.6 mm × 71.6 mm × 7.80 mm (171 grams)");
+    if (!careInstructions) setCareInstructions("IP68 water & dust resistance. Clean with soft, slightly damp, lint-free cloth.");
+    toast.success("Applied Electronics / Tech options preset");
+  };
+
+  const handleAddCustomVariant = () => {
+    setShowVariants(true);
+    const baseP = Number(price) || 49;
+    setVariants((prev) => [
+      ...prev,
+      {
+        size: "Standard",
+        color: "Natural",
+        sku: sku ? `${sku}-${prev.length + 1}` : undefined,
+        price: baseP,
+        stockQuantity: 5,
+        lowStockThreshold: 2,
+      },
+    ]);
+  };
+
+  const handleUpdateVariant = (index: number, field: keyof VariantFormItem, val: unknown) => {
+    setVariants((prev) =>
+      prev.map((v, i) => (i === index ? { ...v, [field]: val } : v))
+    );
+  };
+
+  const handleRemoveVariant = (index: number) => {
+    setVariants((prev) => prev.filter((_, i) => i !== index));
+  };
+
   // Real-time Earnings & Payout Calculation
   const numPrice = Number(price) || 0;
-  // 1. Calculate Gross Customer Price and Net Sales Price before VAT
   const customerPrice = vatIncluded ? numPrice : numPrice * (1 + vatRate / 100);
   const netPriceBeforeVat = vatIncluded ? numPrice / (1 + vatRate / 100) : numPrice;
   const estimatedVat = customerPrice - netPriceBeforeVat;
-
-  // 2. Oivaly Platform Fee (10% commission on listing price)
   const platformFee = numPrice * 0.10;
-
-  // 3. What the seller actually receives after deducting VAT remittance and Oivaly platform fee
-  // Net Payout = Net revenue before VAT - Platform fee
   const sellerTakeHome = Math.max(0, netPriceBeforeVat - platformFee);
 
   // Handle Form Submission
@@ -159,10 +351,41 @@ export default function NewProductPage() {
 
     setIsSubmitting(true);
     try {
+      const fullDescription = formatProductDescription(description, {
+        materials,
+        dimensions,
+        careInstructions,
+        origin,
+        allowPersonalization,
+        personalizationPrompt,
+      });
+
+      const effectiveVariants =
+        showVariants && variants.length > 0
+          ? variants.map((v, idx) => ({
+              size: v.size?.trim() || undefined,
+              color: v.color?.trim() || undefined,
+              model: v.model?.trim() || v.size?.trim() || undefined,
+              attributeKey: v.attributeKey?.trim() || (v.size ? "Size/Set" : undefined),
+              attributeValue: v.attributeValue?.trim() || v.size?.trim() || undefined,
+              sku: v.sku?.trim() || (sku ? `${sku}-${idx + 1}` : undefined),
+              price: v.price !== undefined ? Number(v.price) : numPrice,
+              stockQuantity: Number(v.stockQuantity) || 0,
+              lowStockThreshold: Number(v.lowStockThreshold) || lowStockThreshold,
+            }))
+          : [
+              {
+                sku: sku.trim() || undefined,
+                price: numPrice,
+                stockQuantity: stockQuantity,
+                lowStockThreshold: lowStockThreshold,
+              },
+            ];
+
       const created = await sellerDashboardApi.createProduct(
         {
           name: name.trim(),
-          description: description.trim() || undefined,
+          description: fullDescription || undefined,
           categoryId: categoryId || undefined,
           sku: sku.trim() || undefined,
           price: numPrice,
@@ -175,23 +398,7 @@ export default function NewProductPage() {
             isPrimary: img.isPrimary,
             sortOrder: idx,
           })),
-          variants: showVariants && variants.length > 0
-            ? variants.map((v) => ({
-                size: v.size,
-                color: v.color,
-                sku: v.sku,
-                price: v.price,
-                stockQuantity: v.stockQuantity,
-                lowStockThreshold,
-              }))
-            : [
-                {
-                  sku: sku.trim() || undefined,
-                  price: numPrice,
-                  stockQuantity: stockQuantity,
-                  lowStockThreshold: lowStockThreshold,
-                },
-              ],
+          variants: effectiveVariants,
         },
         store?.id
       );
@@ -236,7 +443,7 @@ export default function NewProductPage() {
               Create New Product Listing
             </h1>
             <p className="text-xs text-muted-foreground">
-              Define pricing, Finnish VAT rates, craftsmanship descriptions, and workshop stock.
+              Define pricing, Finnish VAT rates, selectable options (Etsy style), and craftsmanship specifications.
             </p>
           </div>
         </div>
@@ -248,7 +455,7 @@ export default function NewProductPage() {
             variant="outline"
             disabled={isSubmitting}
             onClick={() => handleSubmit(false)}
-            className="h-9 px-3.5 text-xs rounded-none border-border"
+            className="h-9 text-xs rounded-none border-border"
           >
             <FloppyDiskIcon className="size-3.5 mr-1.5" />
             <span>Save Draft</span>
@@ -258,31 +465,23 @@ export default function NewProductPage() {
             type="button"
             disabled={isSubmitting}
             onClick={() => handleSubmit(true)}
-            className="h-9 px-4 text-xs bg-brand-deep-forest hover:bg-brand-deep-forest/90 text-white rounded-none uppercase font-semibold tracking-wider shadow-xs"
+            className="h-9 px-4 bg-brand-deep-forest hover:bg-brand-deep-forest/90 text-white rounded-none uppercase text-xs font-semibold tracking-wider"
           >
-            {isSubmitting ? (
-              <span className="flex items-center gap-2">
-                <span className="size-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                <span>Submitting...</span>
-              </span>
-            ) : (
-              <span className="flex items-center gap-1.5">
-                <PaperPlaneTiltIcon className="size-3.5" weight="bold" />
-                <span>Submit for Review</span>
-              </span>
-            )}
+            <PaperPlaneTiltIcon className="size-3.5 mr-1.5" />
+            <span>Submit for Review</span>
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column: Form Details (2 Cols) */}
+      {/* Main Grid: Form (2 Cols) + Calculator / Summary (1 Col) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        {/* Left Column: Form Sections (2 Cols) */}
         <div className="lg:col-span-2 space-y-6">
           {/* Section 1: Basic Information */}
           <div className="p-5 bg-background border border-border/80 shadow-xs space-y-4">
             <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <PackageIcon className="size-4 text-primary" weight="bold" />
-              <span>General Details</span>
+              <span>General Listing Details</span>
             </h2>
 
             {/* Product Title */}
@@ -295,7 +494,7 @@ export default function NewProductPage() {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Handcrafted Lapland Birch Kuksa Cup"
+                placeholder="e.g. Ceramic Baking Ramekin Set Oven Safe or iPhone 15 Pro"
                 className="w-full h-10 px-3 text-xs bg-background border border-border rounded-none focus:outline-none focus:ring-1 focus:ring-primary"
               />
             </div>
@@ -323,7 +522,7 @@ export default function NewProductPage() {
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <label htmlFor="prod-sku" className="block text-xs font-semibold text-foreground">
-                    SKU Code
+                    Base SKU Code
                   </label>
                   <button
                     type="button"
@@ -338,7 +537,7 @@ export default function NewProductPage() {
                   type="text"
                   value={sku}
                   onChange={(e) => setSku(e.target.value)}
-                  placeholder="KUKSA-BIRCH-001"
+                  placeholder="OIV-CERAMIC-001"
                   className="w-full h-10 px-3 text-xs bg-background border border-border rounded-none focus:outline-none focus:ring-1 focus:ring-primary font-mono"
                 />
               </div>
@@ -347,14 +546,14 @@ export default function NewProductPage() {
             {/* Description */}
             <div className="space-y-1.5">
               <label htmlFor="prod-desc" className="block text-xs font-semibold text-foreground">
-                Craftsmanship & Description
+                Artisan Story &amp; Description
               </label>
               <textarea
                 id="prod-desc"
                 rows={4}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Describe your handmade item, Finnish wood/materials, sizing, care instructions, and artisan heritage..."
+                placeholder="Describe your handmade item, artisanal techniques, finish, and design heritage..."
                 className="w-full p-3 text-xs bg-background border border-border rounded-none focus:outline-none focus:ring-1 focus:ring-primary leading-relaxed"
               />
             </div>
@@ -364,14 +563,14 @@ export default function NewProductPage() {
           <div className="p-5 bg-background border border-border/80 shadow-xs space-y-4">
             <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <CurrencyEurIcon className="size-4 text-emerald-600" weight="bold" />
-              <span>Pricing & Finnish VAT (ALV)</span>
+              <span>Pricing &amp; Finnish VAT (ALV)</span>
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Base Price */}
               <div className="space-y-1.5">
                 <label htmlFor="prod-price" className="block text-xs font-semibold text-foreground">
-                  Listing Price (€) <span className="text-destructive">*</span>
+                  Listing Base Price (€) <span className="text-destructive">*</span>
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">
@@ -401,7 +600,7 @@ export default function NewProductPage() {
                   className="w-full h-10 px-3 text-xs bg-background border border-border rounded-none focus:outline-none focus:ring-1 focus:ring-primary font-mono"
                 >
                   <option value={25.5}>25.5% (Standard Finnish ALV)</option>
-                  <option value={14.0}>14.0% (Reduced: Food & Groceries)</option>
+                  <option value={14.0}>14.0% (Reduced: Food &amp; Groceries)</option>
                   <option value={10.0}>10.0% (Cultural, Books, Artwork)</option>
                   <option value={0.0}>0.0% (Exempt / Reverse Charge)</option>
                 </select>
@@ -424,7 +623,258 @@ export default function NewProductPage() {
             </div>
           </div>
 
-          {/* Section 3: Inventory & Workshop Stock */}
+          {/* Section 3: Selectable Options & Variants (Etsy Style) */}
+          <div className="p-5 bg-background border border-border/80 shadow-xs space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-border/60">
+              <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <SlidersHorizontalIcon className="size-4 text-primary" weight="bold" />
+                <span>Selectable Options &amp; Variants (Etsy Style)</span>
+              </h2>
+
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={showVariants}
+                  onChange={(e) => {
+                    setShowVariants(e.target.checked);
+                    if (e.target.checked && variants.length === 0) {
+                      handleAddCustomVariant();
+                    }
+                  }}
+                  className="size-4 rounded-none border-border text-primary focus:ring-primary"
+                />
+                <span className="text-xs font-medium text-foreground">
+                  Enable Multiple Options
+                </span>
+              </label>
+            </div>
+
+            {showVariants ? (
+              <div className="space-y-4 pt-2">
+                {/* 1-Click Option Presets */}
+                <div className="flex flex-wrap items-center gap-2 text-xs">
+                  <span className="text-muted-foreground font-medium">Quick Presets:</span>
+                  <button
+                    type="button"
+                    onClick={handleApplyCeramicsPreset}
+                    className="px-2.5 py-1 text-xs border border-border hover:bg-muted font-medium transition-colors"
+                  >
+                    🍶 Ceramics (Sets &amp; Glazes)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleApplyTechPreset}
+                    className="px-2.5 py-1 text-xs border border-border hover:bg-muted font-medium transition-colors"
+                  >
+                    📱 Tech / Storage (128G/256G/512G)
+                  </button>
+                </div>
+
+                {/* Variants Editor Table */}
+                <div className="border border-border/70 overflow-x-auto">
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead className="bg-muted/50 border-b border-border/70 text-muted-foreground uppercase text-[10px] tracking-wider">
+                      <tr>
+                        <th className="p-2.5">Size / Set / Capacity</th>
+                        <th className="p-2.5">Color / Glaze</th>
+                        <th className="p-2.5">SKU Code</th>
+                        <th className="p-2.5">Price (€)</th>
+                        <th className="p-2.5">Workshop Stock</th>
+                        <th className="p-2.5 text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border/60">
+                      {variants.map((v, idx) => (
+                        <tr key={idx} className="hover:bg-muted/20">
+                          <td className="p-2">
+                            <input
+                              type="text"
+                              value={v.size || ""}
+                              onChange={(e) => handleUpdateVariant(idx, "size", e.target.value)}
+                              placeholder="e.g. Set of 4"
+                              className="w-full h-8 px-2 text-xs bg-background border border-border rounded-none focus:ring-1 focus:ring-primary"
+                            />
+                          </td>
+                          <td className="p-2">
+                            <input
+                              type="text"
+                              value={v.color || ""}
+                              onChange={(e) => handleUpdateVariant(idx, "color", e.target.value)}
+                              placeholder="e.g. Sandstone White"
+                              className="w-full h-8 px-2 text-xs bg-background border border-border rounded-none focus:ring-1 focus:ring-primary"
+                            />
+                          </td>
+                          <td className="p-2">
+                            <input
+                              type="text"
+                              value={v.sku || ""}
+                              onChange={(e) => handleUpdateVariant(idx, "sku", e.target.value)}
+                              placeholder="SKU-S4-WHT"
+                              className="w-full h-8 px-2 text-xs bg-background border border-border rounded-none font-mono focus:ring-1 focus:ring-primary"
+                            />
+                          </td>
+                          <td className="p-2">
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={v.price ?? ""}
+                              onChange={(e) =>
+                                handleUpdateVariant(idx, "price", Number(e.target.value))
+                              }
+                              placeholder="Override"
+                              className="w-20 h-8 px-2 text-xs bg-background border border-border rounded-none font-mono focus:ring-1 focus:ring-primary"
+                            />
+                          </td>
+                          <td className="p-2">
+                            <input
+                              type="number"
+                              min="0"
+                              value={v.stockQuantity}
+                              onChange={(e) =>
+                                handleUpdateVariant(idx, "stockQuantity", Number(e.target.value))
+                              }
+                              className="w-16 h-8 px-2 text-xs bg-background border border-border rounded-none font-mono focus:ring-1 focus:ring-primary"
+                            />
+                          </td>
+                          <td className="p-2 text-right">
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveVariant(idx)}
+                              className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                              title="Delete variant"
+                            >
+                              <TrashIcon className="size-3.5" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAddCustomVariant}
+                  className="h-8 text-xs rounded-none border-border"
+                >
+                  <PlusIcon className="size-3 mr-1" />
+                  <span>Add Another Option</span>
+                </Button>
+              </div>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                This item has a single standard option. Check &quot;Enable Multiple Options&quot; above to add options such as sizes, color glazes, or set packs.
+              </p>
+            )}
+          </div>
+
+          {/* Section 4: Specifications & Craftsmanship */}
+          <div className="p-5 bg-background border border-border/80 shadow-xs space-y-4">
+            <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
+              <ListBulletsIcon className="size-4 text-primary" weight="bold" />
+              <span>Specifications &amp; Craftsmanship (Displayed in Product Tabs)</span>
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label htmlFor="spec-materials" className="block text-xs font-semibold text-foreground">
+                  Materials &amp; Composition
+                </label>
+                <input
+                  id="spec-materials"
+                  type="text"
+                  value={materials}
+                  onChange={(e) => setMaterials(e.target.value)}
+                  placeholder="e.g. Stoneware clay, food-safe glaze"
+                  className="w-full h-10 px-3 text-xs bg-background border border-border rounded-none focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label htmlFor="spec-dim" className="block text-xs font-semibold text-foreground">
+                  Dimensions &amp; Capacity
+                </label>
+                <input
+                  id="spec-dim"
+                  type="text"
+                  value={dimensions}
+                  onChange={(e) => setDimensions(e.target.value)}
+                  placeholder="e.g. Ø 9.5 cm × H 5.2 cm (Volume: ~220 ml)"
+                  className="w-full h-10 px-3 text-xs bg-background border border-border rounded-none focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label htmlFor="spec-care" className="block text-xs font-semibold text-foreground">
+                  Care &amp; Usage Instructions
+                </label>
+                <input
+                  id="spec-care"
+                  type="text"
+                  value={careInstructions}
+                  onChange={(e) => setCareInstructions(e.target.value)}
+                  placeholder="e.g. Oven safe to 250°C, microwave & dishwasher safe"
+                  className="w-full h-10 px-3 text-xs bg-background border border-border rounded-none focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label htmlFor="spec-origin" className="block text-xs font-semibold text-foreground">
+                  Workshop Origin
+                </label>
+                <input
+                  id="spec-origin"
+                  type="text"
+                  value={origin}
+                  onChange={(e) => setOrigin(e.target.value)}
+                  placeholder="e.g. Aleksanterinkatu 15, 00100 Helsinki, Finland"
+                  className="w-full h-10 px-3 text-xs bg-background border border-border rounded-none focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Section 5: Buyer Personalization (Etsy Style) */}
+          <div className="p-5 bg-background border border-border/80 shadow-xs space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-border/60">
+              <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <PencilSimpleLineIcon className="size-4 text-primary" weight="bold" />
+                <span>Buyer Personalization (Etsy Style)</span>
+              </h2>
+
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={allowPersonalization}
+                  onChange={(e) => setAllowPersonalization(e.target.checked)}
+                  className="size-4 rounded-none border-border text-primary focus:ring-primary"
+                />
+                <span className="text-xs font-medium text-foreground">
+                  Allow Customization
+                </span>
+              </label>
+            </div>
+
+            {allowPersonalization && (
+              <div className="space-y-2 pt-1">
+                <label htmlFor="pers-prompt" className="block text-xs font-semibold text-foreground">
+                  Instructions for Buyer (Displayed on product page before Add to Cart)
+                </label>
+                <input
+                  id="pers-prompt"
+                  type="text"
+                  value={personalizationPrompt}
+                  onChange={(e) => setPersonalizationPrompt(e.target.value)}
+                  placeholder="e.g. Enter name or initials to hand-engrave on the base (max 30 characters)"
+                  className="w-full h-10 px-3 text-xs bg-background border border-border rounded-none focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Section 6: Inventory & Workshop Stock */}
           <div className="p-5 bg-background border border-border/80 shadow-xs space-y-4">
             <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <PackageIcon className="size-4 text-amber-600" weight="bold" />
@@ -445,7 +895,7 @@ export default function NewProductPage() {
               </label>
             </div>
 
-            {trackInventory && (
+            {trackInventory && !showVariants && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-border/60">
                 <div className="space-y-1.5">
                   <label htmlFor="stock-qty" className="block text-xs font-semibold text-foreground">
@@ -478,11 +928,11 @@ export default function NewProductPage() {
             )}
           </div>
 
-          {/* Section 4: Imagery & Product Gallery */}
+          {/* Section 7: Imagery & Product Gallery */}
           <div className="p-5 bg-background border border-border/80 shadow-xs space-y-4">
             <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <ImageIcon className="size-4 text-primary" weight="bold" />
-              <span>Media & Gallery</span>
+              <span>Media &amp; Gallery</span>
             </h2>
 
             {/* Image input & add */}
@@ -559,7 +1009,7 @@ export default function NewProductPage() {
           <div className="p-5 bg-background border border-border/80 shadow-xs rounded-none sticky top-20 space-y-4">
             <h2 className="text-sm font-semibold text-foreground flex items-center gap-2 pb-2 border-b border-border/60">
               <SparkleIcon className="size-4 text-emerald-600" weight="fill" />
-              <span>Earnings & Payout Engine</span>
+              <span>Earnings &amp; Payout Engine</span>
             </h2>
 
             <div className="space-y-3 text-xs">

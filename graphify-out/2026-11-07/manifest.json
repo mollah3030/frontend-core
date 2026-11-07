@@ -108,9 +108,9 @@
     "semantic_hash": "3729983b6e03b4bc7e210adf2f14af76"
   },
   "app/login/page.tsx": {
-    "mtime": 1794034773.075892,
-    "seen": 1794034937.6143827,
-    "ast_hash": "6d2609658d8a5995c336c22d9e222e39",
+    "mtime": 1794035175.0846403,
+    "seen": 1794035286.8246799,
+    "ast_hash": "e9314e9e45b256dd9d2b96a2e580b6fb",
     "semantic_hash": ""
   },
   "app/makers/page.tsx": {
@@ -150,9 +150,9 @@
     "semantic_hash": "8f9293e78dd751f04a05daf5d49e998b"
   },
   "app/register/page.tsx": {
-    "mtime": 1794034773.1398933,
-    "seen": 1794034937.6143827,
-    "ast_hash": "98d0ad365dd4c75749e5c7fa6f099ef3",
+    "mtime": 1794035196.6653304,
+    "seen": 1794035286.8246799,
+    "ast_hash": "91e62b892a7019c65ead463e80cd38c8",
     "semantic_hash": ""
   },
   "app/reset-password/page.tsx": {
@@ -330,9 +330,9 @@
     "semantic_hash": "f1ea65d510398345a064e0d375d526dc"
   },
   "components/auth/auth-card-layout.tsx": {
-    "mtime": 1794034773.24404,
-    "seen": 1794034937.6143827,
-    "ast_hash": "1af69691b1e7717411d6df7d47ad5ac5",
+    "mtime": 1794035203.2972791,
+    "seen": 1794035286.8246799,
+    "ast_hash": "463955c7fc8d76009d8b327f61ea7268",
     "semantic_hash": ""
   },
   "components/auth/social-auth-buttons.tsx": {
@@ -504,10 +504,10 @@
     "semantic_hash": "6b4c18b82af96effb8879f9dabdda69d"
   },
   "components/layout/marketplace-shell.tsx": {
-    "mtime": 1791742603.5269148,
-    "seen": 1793994407.7594936,
-    "ast_hash": "c37693fbcbabf9dfef9b883a645722f6",
-    "semantic_hash": "c37693fbcbabf9dfef9b883a645722f6"
+    "mtime": 1794035156.174788,
+    "seen": 1794035286.8246799,
+    "ast_hash": "7f9671e83bac363225f9b44cfa16fead",
+    "semantic_hash": ""
   },
   "components/layout/mobile-navigation.tsx": {
     "mtime": 1793362755.2511334,
@@ -1428,9 +1428,9 @@
     "semantic_hash": "6a4a26d8e79b2f06cc5a473eec4b34ba"
   },
   "components/auth/customer-auth-layout.tsx": {
-    "mtime": 1794034764.839746,
-    "seen": 1794034937.6143827,
-    "ast_hash": "3d44704deac5c2ebd5cd0820bf2a050c",
+    "mtime": 1794035169.0429754,
+    "seen": 1794035286.8246799,
+    "ast_hash": "df07c25dbd60b4e1fdac4ee045c23072",
     "semantic_hash": ""
   },
   "public/file.svg": {

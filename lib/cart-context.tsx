@@ -177,7 +177,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         : Number(product.price);
 
       const storeId = product.storeId || product.store?.id || "store-default";
-      const storeName = product.store?.name || "Nordic Artisan Studio";
+      const storeName = product.store?.name || "Oivaly Artisan Studio";
 
       // 1. If authenticated, try backend first
       if (token) {

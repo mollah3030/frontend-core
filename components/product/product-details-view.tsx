@@ -39,6 +39,8 @@ export function ProductDetailsView({
     activeVariants.length === 1 ? activeVariants[0] : null
   );
 
+  const [personalizationText, setPersonalizationText] = React.useState("");
+
   // Active price: variant price takes precedence if available
   const numericPrice = selectedVariant?.price
     ? Number(selectedVariant.price)
@@ -155,23 +157,28 @@ export function ProductDetailsView({
             </p>
           </div>
 
-          {/* Variants Selector */}
+          {/* Variants Selector (Color swatches, size/model pills, stock badge, personalization) */}
           <ProductVariants
+            product={product}
             variants={product.variants}
             selectedVariant={selectedVariant}
             onSelectVariant={setSelectedVariant}
+            personalizationText={personalizationText}
+            onPersonalizationChange={setPersonalizationText}
           />
 
-          {/* Purchase Actions (Quantity, Add to Cart, Wishlist) */}
+          {/* Purchase Actions (Quantity, Add to Cart, Buy Now, Wishlist) */}
           <ProductPurchaseActions
             product={product}
             selectedVariant={selectedVariant}
+            personalizationText={personalizationText}
           />
 
           {/* Delivery & Trust Summary Card */}
           <ProductDeliveryInfo
             isReturnEligible={product.isReturnEligible}
             storeName={storeName}
+            storeAddress={storeAddress}
             storeCity={storeCity}
           />
         </div>

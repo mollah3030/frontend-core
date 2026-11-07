@@ -19,6 +19,9 @@ import {
   WarningCircleIcon,
   PaperPlaneTiltIcon,
   LockKeyIcon,
+  SlidersHorizontalIcon,
+  ListBulletsIcon,
+  PencilSimpleLineIcon,
 } from "@phosphor-icons/react";
 import { useSellerAuth } from "@/lib/seller-auth-context";
 import { sellerDashboardApi } from "@/resources/apis/seller-dashboard.api";
@@ -26,6 +29,99 @@ import { StoreProductItem } from "@/resources/interfaces/seller-dashboard.interf
 import { env } from "@/lib/env";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+
+interface VariantFormItem {
+  id?: string;
+  size?: string;
+  color?: string;
+  model?: string;
+  attributeKey?: string;
+  attributeValue?: string;
+  sku?: string;
+  price?: number;
+  stockQuantity: number;
+  lowStockThreshold?: number;
+}
+
+function parseProductSpecs(description: string = "") {
+  let materials = "";
+  let dimensions = "";
+  let careInstructions = "";
+  let origin = "";
+  let personalizationPrompt = "";
+  let allowPersonalization = false;
+
+  const matMatch = description.match(/- \*\*Materials:\*\* ([^\n\r]+)/);
+  if (matMatch) materials = matMatch[1].trim();
+
+  const dimMatch = description.match(/- \*\*Dimensions:\*\* ([^\n\r]+)/);
+  if (dimMatch) dimensions = dimMatch[1].trim();
+
+  const careMatch = description.match(/- \*\*Care Instructions:\*\* ([^\n\r]+)/);
+  if (careMatch) careInstructions = careMatch[1].trim();
+
+  const origMatch = description.match(/- \*\*Workshop Origin:\*\* ([^\n\r]+)/);
+  if (origMatch) origin = origMatch[1].trim();
+
+  const persMatch = description.match(/- \*\*Personalization Instructions:\*\* ([^\n\r]+)/);
+  if (persMatch) {
+    personalizationPrompt = persMatch[1].trim();
+    allowPersonalization = true;
+  }
+
+  // Clean description without the ### Specifications block
+  const cleanDescription = description.split(/### Specifications/i)[0].trim();
+
+  return {
+    cleanDescription,
+    materials,
+    dimensions,
+    careInstructions,
+    origin,
+    personalizationPrompt,
+    allowPersonalization,
+  };
+}
+
+function formatProductDescription(
+  cleanDesc: string,
+  specs: {
+    materials?: string;
+    dimensions?: string;
+    careInstructions?: string;
+    origin?: string;
+    allowPersonalization?: boolean;
+    personalizationPrompt?: string;
+  }
+) {
+  const parts: string[] = [];
+  if (cleanDesc.trim()) {
+    parts.push(cleanDesc.trim());
+  }
+
+  const specLines: string[] = [];
+  if (specs.materials?.trim()) {
+    specLines.push(`- **Materials:** ${specs.materials.trim()}`);
+  }
+  if (specs.dimensions?.trim()) {
+    specLines.push(`- **Dimensions:** ${specs.dimensions.trim()}`);
+  }
+  if (specs.careInstructions?.trim()) {
+    specLines.push(`- **Care Instructions:** ${specs.careInstructions.trim()}`);
+  }
+  if (specs.origin?.trim()) {
+    specLines.push(`- **Workshop Origin:** ${specs.origin.trim()}`);
+  }
+  if (specs.allowPersonalization && specs.personalizationPrompt?.trim()) {
+    specLines.push(`- **Personalization Instructions:** ${specs.personalizationPrompt.trim()}`);
+  }
+
+  if (specLines.length > 0) {
+    parts.push(`### Specifications\n${specLines.join("\n")}`);
+  }
+
+  return parts.join("\n\n");
+}
 
 function EditProductForm() {
   const router = useRouter();
@@ -51,6 +147,22 @@ function EditProductForm() {
   const [trackInventory, setTrackInventory] = React.useState(true);
   const [stockQuantity, setStockQuantity] = React.useState<number>(0);
   const [lowStockThreshold, setLowStockThreshold] = React.useState<number>(3);
+
+  // Specifications
+  const [materials, setMaterials] = React.useState("");
+  const [dimensions, setDimensions] = React.useState("");
+  const [careInstructions, setCareInstructions] = React.useState("");
+  const [origin, setOrigin] = React.useState("Aleksanterinkatu 15, 00100 Helsinki, Finland");
+
+  // Etsy-Style Buyer Personalization
+  const [allowPersonalization, setAllowPersonalization] = React.useState(false);
+  const [personalizationPrompt, setPersonalizationPrompt] = React.useState(
+    "Enter custom engraving, monogram, or gift message instructions (max 30 characters):"
+  );
+
+  // Variants state (multi-dimensional options)
+  const [showVariants, setShowVariants] = React.useState(false);
+  const [variants, setVariants] = React.useState<VariantFormItem[]>([]);
 
   // Images state populated strictly from database
   const [imageUrl, setImageUrl] = React.useState("");
@@ -86,7 +198,24 @@ function EditProductForm() {
 
         // Populate form strictly from real database product entity
         setName(prod.name || "");
-        setDescription(prod.description || "");
+
+        // Parse structured specifications from description
+        const parsed = parseProductSpecs(prod.description || "");
+        setDescription(parsed.cleanDescription);
+        setMaterials(parsed.materials);
+        setDimensions(parsed.dimensions);
+        setCareInstructions(parsed.careInstructions);
+        setOrigin(
+          parsed.origin ||
+          (store && "address" in store
+            ? (store as unknown as { address?: string }).address || "Aleksanterinkatu 15, 00100 Helsinki, Finland"
+            : "Aleksanterinkatu 15, 00100 Helsinki, Finland")
+        );
+        setAllowPersonalization(parsed.allowPersonalization);
+        if (parsed.personalizationPrompt) {
+          setPersonalizationPrompt(parsed.personalizationPrompt);
+        }
+
         setCategoryId(prod.categoryId || prod.category?.id || (activeCategories[0]?.id ?? ""));
         setSku(prod.sku || "");
         setPrice(prod.price !== undefined && prod.price !== null ? Number(prod.price) : 0);
@@ -98,7 +227,7 @@ function EditProductForm() {
         setVatIncluded(prod.vatIncluded ?? true);
         setTrackInventory(prod.trackInventory ?? true);
 
-        // Derive stock quantity from database variants
+        // Derive stock quantity and variants from database variants
         if (prod.variants && prod.variants.length > 0) {
           const totalStock = prod.variants.reduce(
             (sum, v) => sum + (Number(v.stockQuantity) || 0),
@@ -106,9 +235,31 @@ function EditProductForm() {
           );
           setStockQuantity(totalStock);
           setLowStockThreshold(Number(prod.variants[0].lowStockThreshold) || 3);
+
+          const hasMultipleOrNamedVariants =
+            prod.variants.length > 1 ||
+            Boolean(prod.variants[0]?.size || prod.variants[0]?.color || prod.variants[0]?.model);
+
+          setShowVariants(hasMultipleOrNamedVariants);
+          setVariants(
+            prod.variants.map((v) => ({
+              id: v.id,
+              size: v.size || undefined,
+              color: v.color || undefined,
+              model: v.model || undefined,
+              attributeKey: v.attributeKey || undefined,
+              attributeValue: v.attributeValue || undefined,
+              sku: v.sku || undefined,
+              price: v.price !== null && v.price !== undefined ? Number(v.price) : undefined,
+              stockQuantity: Number(v.stockQuantity) || 0,
+              lowStockThreshold: Number(v.lowStockThreshold) || 3,
+            }))
+          );
         } else {
           setStockQuantity(Number(prod.totalStock) || 0);
           setLowStockThreshold(3);
+          setShowVariants(false);
+          setVariants([]);
         }
 
         // Images strictly from database (empty if none uploaded)
@@ -136,7 +287,7 @@ function EditProductForm() {
 
   // Quick SKU generator (only available if product is not published)
   const handleGenerateSku = () => {
-    const prefix = name ? name.slice(0, 3).toUpperCase() : "NDK";
+    const prefix = name ? name.slice(0, 3).toUpperCase() : "OIV";
     const randomNum = Math.floor(1000 + Math.random() * 9000);
     setSku(`${prefix}-${randomNum}`);
     toast.info("Generated SKU code");
@@ -181,6 +332,142 @@ function EditProductForm() {
     );
   };
 
+  // Presets for Variants
+  const handleApplyCeramicsPreset = () => {
+    const baseP = Number(price) || 38;
+    const baseSku = sku || "CRM";
+    setShowVariants(true);
+    setVariants([
+      {
+        size: "Set of 2",
+        color: "Sandstone White",
+        sku: `${baseSku}-S2-WHT`,
+        price: baseP,
+        stockQuantity: 10,
+        lowStockThreshold: 3,
+      },
+      {
+        size: "Set of 4",
+        color: "Sandstone White",
+        sku: `${baseSku}-S4-WHT`,
+        price: Math.round(baseP * 1.85),
+        stockQuantity: 8,
+        lowStockThreshold: 2,
+      },
+      {
+        size: "Set of 6",
+        color: "Sandstone White",
+        sku: `${baseSku}-S6-WHT`,
+        price: Math.round(baseP * 2.65),
+        stockQuantity: 4,
+        lowStockThreshold: 2,
+      },
+      {
+        size: "Set of 2",
+        color: "Nordic Sage",
+        sku: `${baseSku}-S2-SGE`,
+        price: baseP,
+        stockQuantity: 6,
+        lowStockThreshold: 2,
+      },
+      {
+        size: "Set of 4",
+        color: "Nordic Sage",
+        sku: `${baseSku}-S4-SGE`,
+        price: Math.round(baseP * 1.85),
+        stockQuantity: 5,
+        lowStockThreshold: 2,
+      },
+    ]);
+    if (!materials) setMaterials("High-fire stoneware clay, non-toxic food-safe mineral glaze");
+    if (!dimensions) setDimensions("Ø 9.5 cm × H 5.2 cm (Volume: ~220 ml / 7.5 oz)");
+    if (!careInstructions) setCareInstructions("Oven safe to 250°C (480°F), microwave & dishwasher safe. Avoid sudden thermal shocks.");
+    toast.success("Applied Ceramics & Tableware options preset");
+  };
+
+  const handleApplyTechPreset = () => {
+    const baseP = Number(price) || 799;
+    const baseSku = sku || "TECH";
+    setShowVariants(true);
+    setVariants([
+      {
+        size: "128GB",
+        color: "Space Black",
+        model: "128GB",
+        sku: `${baseSku}-128-BLK`,
+        price: baseP,
+        stockQuantity: 8,
+        lowStockThreshold: 2,
+      },
+      {
+        size: "256GB",
+        color: "Space Black",
+        model: "256GB",
+        sku: `${baseSku}-256-BLK`,
+        price: baseP + 120,
+        stockQuantity: 5,
+        lowStockThreshold: 2,
+      },
+      {
+        size: "512GB",
+        color: "Space Black",
+        model: "512GB",
+        sku: `${baseSku}-512-BLK`,
+        price: baseP + 260,
+        stockQuantity: 3,
+        lowStockThreshold: 2,
+      },
+      {
+        size: "128GB",
+        color: "Natural Titanium",
+        model: "128GB",
+        sku: `${baseSku}-128-TIT`,
+        price: baseP,
+        stockQuantity: 6,
+        lowStockThreshold: 2,
+      },
+      {
+        size: "256GB",
+        color: "Natural Titanium",
+        model: "256GB",
+        sku: `${baseSku}-256-TIT`,
+        price: baseP + 120,
+        stockQuantity: 4,
+        lowStockThreshold: 2,
+      },
+    ]);
+    if (!materials) setMaterials("Aerospace-grade Aluminum, Ceramic Shield front, textured matte glass back");
+    if (!dimensions) setDimensions("147.6 mm × 71.6 mm × 7.80 mm (171 grams)");
+    if (!careInstructions) setCareInstructions("IP68 water & dust resistance. Clean with soft, slightly damp, lint-free cloth.");
+    toast.success("Applied Electronics / Tech options preset");
+  };
+
+  const handleAddCustomVariant = () => {
+    setShowVariants(true);
+    const baseP = Number(price) || 49;
+    setVariants((prev) => [
+      ...prev,
+      {
+        size: "Standard",
+        color: "Natural",
+        sku: sku ? `${sku}-${prev.length + 1}` : undefined,
+        price: baseP,
+        stockQuantity: 5,
+        lowStockThreshold: 2,
+      },
+    ]);
+  };
+
+  const handleUpdateVariant = (index: number, field: keyof VariantFormItem, val: unknown) => {
+    setVariants((prev) =>
+      prev.map((v, i) => (i === index ? { ...v, [field]: val } : v))
+    );
+  };
+
+  const handleRemoveVariant = (index: number) => {
+    setVariants((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const isPublished = originalProduct?.status === "PUBLISHED";
   const currentStatus = originalProduct?.status;
 
@@ -207,9 +494,40 @@ function EditProductForm() {
 
     setIsSubmitting(true);
     try {
+      const fullDescription = formatProductDescription(description, {
+        materials,
+        dimensions,
+        careInstructions,
+        origin,
+        allowPersonalization,
+        personalizationPrompt,
+      });
+
+      const effectiveVariants =
+        showVariants && variants.length > 0
+          ? variants.map((v, idx) => ({
+            size: v.size?.trim() || undefined,
+            color: v.color?.trim() || undefined,
+            model: v.model?.trim() || v.size?.trim() || undefined,
+            attributeKey: v.attributeKey?.trim() || (v.size ? "Size/Set" : undefined),
+            attributeValue: v.attributeValue?.trim() || v.size?.trim() || undefined,
+            sku: v.sku?.trim() || (sku ? `${sku}-${idx + 1}` : undefined),
+            price: v.price !== undefined && v.price !== null ? Number(v.price) : numPrice,
+            stockQuantity: Number(v.stockQuantity) || 0,
+            lowStockThreshold: Number(v.lowStockThreshold) || lowStockThreshold,
+          }))
+          : [
+            {
+              sku: isPublished ? originalProduct.sku : (sku.trim() || undefined),
+              price: numPrice,
+              stockQuantity: Number(stockQuantity) || 0,
+              lowStockThreshold: Number(lowStockThreshold) || 3,
+            },
+          ];
+
       const updatePayload: Record<string, unknown> = {
         name: name.trim(),
-        description: description.trim() || undefined,
+        description: fullDescription || undefined,
         price: numPrice,
         vatRate: vatRate,
         vatIncluded: vatIncluded,
@@ -220,14 +538,7 @@ function EditProductForm() {
           isPrimary: img.isPrimary,
           sortOrder: idx,
         })),
-        variants: [
-          {
-            sku: isPublished ? originalProduct.sku : (sku.trim() || undefined),
-            price: numPrice,
-            stockQuantity: Number(stockQuantity) || 0,
-            lowStockThreshold: Number(lowStockThreshold) || 3,
-          },
-        ],
+        variants: effectiveVariants,
       };
 
       // Only allow modifying category and SKU if NOT published
@@ -300,100 +611,80 @@ function EditProductForm() {
               <h1 className="text-xl md:text-2xl font-serif font-bold text-foreground tracking-tight">
                 Edit Product Listing
               </h1>
-              {isPublished ? (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20">
-                  <CheckCircleIcon className="size-3" weight="bold" />
+              {currentStatus === "PUBLISHED" ? (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                  <CheckCircleIcon className="size-3" weight="fill" />
                   <span>PUBLISHED</span>
                 </span>
-              ) : currentStatus === "SUBMITTED" || currentStatus === "PENDING_REVIEW" ? (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20">
-                  <ClockCountdownIcon className="size-3" weight="bold" />
+              ) : currentStatus === "PENDING_REVIEW" || currentStatus === "SUBMITTED" ? (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                  <ClockCountdownIcon className="size-3" weight="fill" />
                   <span>IN REVIEW</span>
                 </span>
-              ) : currentStatus === "DRAFT" ? (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold bg-muted text-muted-foreground border border-border">
-                  <span>DRAFT</span>
-                </span>
               ) : currentStatus === "REJECTED" ? (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold bg-destructive/10 text-destructive border border-destructive/20">
-                  <WarningCircleIcon className="size-3" weight="bold" />
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+                  <WarningCircleIcon className="size-3" weight="fill" />
                   <span>REJECTED</span>
                 </span>
-              ) : null}
+              ) : (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-muted text-muted-foreground border border-border">
+                  <span>DRAFT</span>
+                </span>
+              )}
             </div>
             <p className="text-xs text-muted-foreground">
-              Modify basic product details, pricing, Finnish VAT rates, workshop inventory, and media.
+              Modify pricing, stock reservations, selectable Etsy-grade options, and craftsmanship specifications.
             </p>
           </div>
         </div>
 
         {/* Action Buttons Top */}
         <div className="flex items-center gap-2 self-start sm:self-auto">
-          {isPublished && (
+          {isPublished && originalProduct.slug && (
             <Button
               asChild
               variant="outline"
               size="sm"
-              className="h-9 px-3 text-xs rounded-none border-border"
+              className="h-9 text-xs rounded-none border-border"
             >
-              <Link
-                href={`/products/${originalProduct.slug || originalProduct.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <ArrowSquareOutIcon className="size-3.5 mr-1.5 text-primary" />
-                <span>View Live</span>
+              <Link href={`/products/${originalProduct.slug}`} target="_blank">
+                <ArrowSquareOutIcon className="size-3.5 mr-1.5" />
+                <span>View in Store</span>
               </Link>
-            </Button>
-          )}
-
-          {(currentStatus === "DRAFT" || currentStatus === "REJECTED") && (
-            <Button
-              type="button"
-              variant="outline"
-              disabled={isSubmitting}
-              onClick={() => handleSave(true)}
-              className="h-9 px-3.5 text-xs rounded-none border-border font-semibold shadow-xs"
-            >
-              <PaperPlaneTiltIcon className="size-3.5 mr-1.5 text-primary" />
-              <span>Submit for Review</span>
             </Button>
           )}
 
           <Button
             type="button"
+            variant="outline"
             disabled={isSubmitting}
             onClick={() => handleSave(false)}
-            className="h-9 px-4 text-xs bg-brand-deep-forest hover:bg-brand-deep-forest/90 text-white rounded-none uppercase font-semibold tracking-wider shadow-xs"
+            className="h-9 text-xs rounded-none border-border"
           >
-            {isSubmitting ? (
-              <span className="flex items-center gap-2">
-                <span className="size-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                <span>Saving...</span>
-              </span>
-            ) : (
-              <span className="flex items-center gap-1.5">
-                <FloppyDiskIcon className="size-3.5" weight="bold" />
-                <span>Save Changes</span>
-              </span>
-            )}
+            <FloppyDiskIcon className="size-3.5 mr-1.5" />
+            <span>Save Changes</span>
           </Button>
+
+          {currentStatus !== "PUBLISHED" && currentStatus !== "PENDING_REVIEW" && currentStatus !== "SUBMITTED" && (
+            <Button
+              type="button"
+              disabled={isSubmitting}
+              onClick={() => handleSave(true)}
+              className="h-9 px-4 bg-brand-deep-forest hover:bg-brand-deep-forest/90 text-white rounded-none uppercase text-xs font-semibold tracking-wider"
+            >
+              <PaperPlaneTiltIcon className="size-3.5 mr-1.5" />
+              <span>Submit for Review</span>
+            </Button>
+          )}
         </div>
       </div>
 
-      {/* Status Advisory Banner */}
-      {isPublished ? (
-        <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-900 dark:text-emerald-200 text-xs flex items-start gap-2.5">
-          <CheckCircleIcon className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400 mt-0.5" weight="fill" />
-          <div>
-            <span className="font-semibold">Live Marketplace Listing:</span> Published by Platform Administrator. Basic edits (pricing, stock, craft description, photos) will sync directly to the live customer storefront. Category and SKU are permanently locked to preserve marketplace data integrity.
-          </div>
-        </div>
-      ) : currentStatus === "SUBMITTED" || currentStatus === "PENDING_REVIEW" ? (
+      {/* Review / Status Banners */}
+      {currentStatus === "PENDING_REVIEW" || currentStatus === "SUBMITTED" ? (
         <div className="p-3.5 bg-amber-500/10 border border-amber-500/30 text-amber-900 dark:text-amber-200 text-xs flex items-start gap-2.5">
-          <ClockCountdownIcon className="size-4 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" weight="fill" />
-          <div className="flex-1">
-            <span className="font-semibold">Listing is currently in review:</span> Awaiting Platform Administrator moderation and publishing. You can edit any details while waiting for review.
+          <ClockCountdownIcon className="size-4 shrink-0 text-amber-600 mt-0.5" weight="fill" />
+          <div>
+            <span className="font-semibold">Listing is Pending Administrator Review:</span> You can continue editing prices and imagery, but changes will be evaluated before public listing activation.
           </div>
         </div>
       ) : currentStatus === "DRAFT" ? (
@@ -407,7 +698,7 @@ function EditProductForm() {
         <div className="p-3.5 bg-destructive/10 border border-destructive/30 text-destructive text-xs flex items-start gap-2.5">
           <WarningCircleIcon className="size-4 shrink-0 text-destructive mt-0.5" weight="fill" />
           <div>
-            <span className="font-semibold">Rejection Feedback:</span> {originalProduct.rejectionReason || "Please review the product details, Finnish VAT specifications, or imagery to meet Nordic artisan guidelines."}
+            <span className="font-semibold">Rejection Feedback:</span> {originalProduct.rejectionReason || "Please review the product details, Finnish VAT specifications, or imagery to meet artisan guidelines."}
           </div>
         </div>
       ) : null}
@@ -419,7 +710,7 @@ function EditProductForm() {
           <div className="p-5 bg-background border border-border/80 shadow-xs space-y-4">
             <h2 className="text-sm font-semibold text-foreground flex items-center gap-2 pb-2 border-b border-border/60">
               <PackageIcon className="size-4 text-primary" />
-              <span>Basic Information</span>
+              <span>General Listing Details</span>
             </h2>
 
             <div className="space-y-3">
@@ -431,20 +722,20 @@ function EditProductForm() {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Handmade Birch Wood Kuksa Cup"
+                  placeholder="e.g. Ceramic Baking Ramekin Set Oven Safe or iPhone 15 Pro"
                   className="w-full h-9 px-3 text-xs bg-background border border-border rounded-none focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-foreground mb-1">
-                  Detailed Description & Craft Story
+                  Artisan Story &amp; Description
                 </label>
                 <textarea
                   rows={4}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Describe the materials, Finnish workshop origin, craftsmanship techniques, and care instructions..."
+                  placeholder="Describe your handmade item, artisanal techniques, finish, and design heritage..."
                   className="w-full p-3 text-xs bg-background border border-border rounded-none focus:outline-none focus:ring-1 focus:ring-primary resize-y"
                 />
               </div>
@@ -478,15 +769,6 @@ function EditProductForm() {
                       </option>
                     ))}
                   </select>
-                  {isPublished ? (
-                    <p className="text-[10px] text-muted-foreground mt-1">
-                      Category cannot be changed once product is published.
-                    </p>
-                  ) : (
-                    <p className="text-[10px] text-muted-foreground mt-1">
-                      Select marketplace taxonomy category.
-                    </p>
-                  )}
                 </div>
 
                 {/* SKU Field */}
@@ -516,18 +798,9 @@ function EditProductForm() {
                     value={sku}
                     disabled={isPublished}
                     onChange={(e) => setSku(e.target.value)}
-                    placeholder="e.g. KUK-1092"
+                    placeholder="e.g. OIV-CERAMIC-001"
                     className="w-full h-9 px-3 text-xs bg-background border border-border rounded-none font-mono focus:outline-none focus:ring-1 focus:ring-primary uppercase disabled:bg-muted/70 disabled:text-muted-foreground disabled:cursor-not-allowed"
                   />
-                  {isPublished ? (
-                    <p className="text-[10px] text-muted-foreground mt-1">
-                      SKU is locked on published listings to preserve inventory and order tracking.
-                    </p>
-                  ) : (
-                    <p className="text-[10px] text-muted-foreground mt-1">
-                      Unique stock keeping unit identifier.
-                    </p>
-                  )}
                 </div>
               </div>
             </div>
@@ -537,7 +810,7 @@ function EditProductForm() {
           <div className="p-5 bg-background border border-border/80 shadow-xs space-y-4">
             <h2 className="text-sm font-semibold text-foreground flex items-center gap-2 pb-2 border-b border-border/60">
               <CurrencyEurIcon className="size-4 text-primary" />
-              <span>Pricing & Finnish VAT Compliance</span>
+              <span>Pricing &amp; Finnish VAT Compliance</span>
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -571,8 +844,8 @@ function EditProductForm() {
                 >
                   <option value={25.5}>25.5% (Finnish Standard 2024+)</option>
                   <option value={24}>24.0% (Legacy Standard)</option>
-                  <option value={14}>14.0% (Food & Restaurant)</option>
-                  <option value={10}>10.0% (Books, Culture & Transport)</option>
+                  <option value={14}>14.0% (Food &amp; Restaurant)</option>
+                  <option value={10}>10.0% (Books, Culture &amp; Transport)</option>
                   <option value={0}>0.0% (VAT Exempt / Export)</option>
                 </select>
               </div>
@@ -593,11 +866,257 @@ function EditProductForm() {
             </div>
           </div>
 
-          {/* Section 3: Inventory & Stock */}
+          {/* Section 3: Selectable Options & Variants (Etsy Style) */}
+          <div className="p-5 bg-background border border-border/80 shadow-xs space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-border/60">
+              <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <SlidersHorizontalIcon className="size-4 text-primary" weight="bold" />
+                <span>Selectable Options &amp; Variants </span>
+              </h2>
+
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={showVariants}
+                  onChange={(e) => {
+                    setShowVariants(e.target.checked);
+                    if (e.target.checked && variants.length === 0) {
+                      handleAddCustomVariant();
+                    }
+                  }}
+                  className="size-4 rounded-none border-border text-primary focus:ring-primary"
+                />
+                <span className="text-xs font-medium text-foreground">
+                  Enable Multiple Options
+                </span>
+              </label>
+            </div>
+
+            {showVariants ? (
+              <div className="space-y-4 pt-2">
+                {/* 1-Click Option Presets */}
+                <div className="flex flex-wrap items-center gap-2 text-xs">
+                  <span className="text-muted-foreground font-medium">Quick Presets:</span>
+                  <button
+                    type="button"
+                    onClick={handleApplyCeramicsPreset}
+                    className="px-2.5 py-1 text-xs border border-border hover:bg-muted font-medium transition-colors"
+                  >
+                    🍶 Ceramics (Sets &amp; Glazes)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleApplyTechPreset}
+                    className="px-2.5 py-1 text-xs border border-border hover:bg-muted font-medium transition-colors"
+                  >
+                    📱 Tech / Storage (128G/256G/512G)
+                  </button>
+                </div>
+
+                {/* Variants Editor Table */}
+                <div className="border border-border/70 overflow-x-auto">
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead className="bg-muted/50 border-b border-border/70 text-muted-foreground uppercase text-[10px] tracking-wider">
+                      <tr>
+                        <th className="p-2.5">Size / Set / Capacity</th>
+                        <th className="p-2.5">Color / Glaze</th>
+                        <th className="p-2.5">SKU Code</th>
+                        <th className="p-2.5">Price (€)</th>
+                        <th className="p-2.5">Workshop Stock</th>
+                        <th className="p-2.5 text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border/60">
+                      {variants.map((v, idx) => (
+                        <tr key={idx} className="hover:bg-muted/20">
+                          <td className="p-2">
+                            <input
+                              type="text"
+                              value={v.size || ""}
+                              onChange={(e) => handleUpdateVariant(idx, "size", e.target.value)}
+                              placeholder="e.g. Set of 4"
+                              className="w-full h-8 px-2 text-xs bg-background border border-border rounded-none focus:ring-1 focus:ring-primary"
+                            />
+                          </td>
+                          <td className="p-2">
+                            <input
+                              type="text"
+                              value={v.color || ""}
+                              onChange={(e) => handleUpdateVariant(idx, "color", e.target.value)}
+                              placeholder="e.g. Sandstone White"
+                              className="w-full h-8 px-2 text-xs bg-background border border-border rounded-none focus:ring-1 focus:ring-primary"
+                            />
+                          </td>
+                          <td className="p-2">
+                            <input
+                              type="text"
+                              value={v.sku || ""}
+                              onChange={(e) => handleUpdateVariant(idx, "sku", e.target.value)}
+                              placeholder="SKU-S4-WHT"
+                              className="w-full h-8 px-2 text-xs bg-background border border-border rounded-none font-mono focus:ring-1 focus:ring-primary"
+                            />
+                          </td>
+                          <td className="p-2">
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={v.price ?? ""}
+                              onChange={(e) =>
+                                handleUpdateVariant(idx, "price", Number(e.target.value))
+                              }
+                              placeholder="Override"
+                              className="w-20 h-8 px-2 text-xs bg-background border border-border rounded-none font-mono focus:ring-1 focus:ring-primary"
+                            />
+                          </td>
+                          <td className="p-2">
+                            <input
+                              type="number"
+                              min="0"
+                              value={v.stockQuantity}
+                              onChange={(e) =>
+                                handleUpdateVariant(idx, "stockQuantity", Number(e.target.value))
+                              }
+                              className="w-16 h-8 px-2 text-xs bg-background border border-border rounded-none font-mono focus:ring-1 focus:ring-primary"
+                            />
+                          </td>
+                          <td className="p-2 text-right">
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveVariant(idx)}
+                              className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                              title="Delete variant"
+                            >
+                              <TrashIcon className="size-3.5" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAddCustomVariant}
+                  className="h-8 text-xs rounded-none border-border"
+                >
+                  <PlusIcon className="size-3 mr-1" />
+                  <span>Add Another Option</span>
+                </Button>
+              </div>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                This item has a single standard option. Check &quot;Enable Multiple Options&quot; above to add options such as sizes, color glazes, or set packs.
+              </p>
+            )}
+          </div>
+
+          {/* Section 4: Specifications & Craftsmanship */}
+          <div className="p-5 bg-background border border-border/80 shadow-xs space-y-4">
+            <h2 className="text-sm font-semibold text-foreground flex items-center gap-2 pb-2 border-b border-border/60">
+              <ListBulletsIcon className="size-4 text-primary" weight="bold" />
+              <span>Specifications &amp; Craftsmanship (Displayed in Product Tabs)</span>
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-foreground">
+                  Materials &amp; Composition
+                </label>
+                <input
+                  type="text"
+                  value={materials}
+                  onChange={(e) => setMaterials(e.target.value)}
+                  placeholder="e.g. Stoneware clay, food-safe mineral glaze"
+                  className="w-full h-9 px-3 text-xs bg-background border border-border rounded-none focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-foreground">
+                  Dimensions &amp; Capacity
+                </label>
+                <input
+                  type="text"
+                  value={dimensions}
+                  onChange={(e) => setDimensions(e.target.value)}
+                  placeholder="e.g. Ø 9.5 cm × H 5.2 cm (Volume: ~220 ml)"
+                  className="w-full h-9 px-3 text-xs bg-background border border-border rounded-none focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-foreground">
+                  Care &amp; Usage Instructions
+                </label>
+                <input
+                  type="text"
+                  value={careInstructions}
+                  onChange={(e) => setCareInstructions(e.target.value)}
+                  placeholder="e.g. Oven safe to 250°C, microwave & dishwasher safe"
+                  className="w-full h-9 px-3 text-xs bg-background border border-border rounded-none focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-foreground">
+                  Workshop Origin
+                </label>
+                <input
+                  type="text"
+                  value={origin}
+                  onChange={(e) => setOrigin(e.target.value)}
+                  placeholder="e.g. Aleksanterinkatu 15, 00100 Helsinki, Finland"
+                  className="w-full h-9 px-3 text-xs bg-background border border-border rounded-none focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Section 5: Buyer Personalization (Etsy Style) */}
+          <div className="p-5 bg-background border border-border/80 shadow-xs space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-border/60">
+              <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <PencilSimpleLineIcon className="size-4 text-primary" weight="bold" />
+                <span>Buyer Personalization </span>
+              </h2>
+
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={allowPersonalization}
+                  onChange={(e) => setAllowPersonalization(e.target.checked)}
+                  className="size-4 rounded-none border-border text-primary focus:ring-primary"
+                />
+                <span className="text-xs font-medium text-foreground">
+                  Allow Customization
+                </span>
+              </label>
+            </div>
+
+            {allowPersonalization && (
+              <div className="space-y-2 pt-1">
+                <label className="block text-xs font-semibold text-foreground">
+                  Instructions for Buyer (Displayed on product page before Add to Cart)
+                </label>
+                <input
+                  type="text"
+                  value={personalizationPrompt}
+                  onChange={(e) => setPersonalizationPrompt(e.target.value)}
+                  placeholder="e.g. Enter name or initials to hand-engrave on the base (max 30 characters)"
+                  className="w-full h-9 px-3 text-xs bg-background border border-border rounded-none focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Section 6: Inventory & Stock */}
           <div className="p-5 bg-background border border-border/80 shadow-xs space-y-4">
             <h2 className="text-sm font-semibold text-foreground flex items-center gap-2 pb-2 border-b border-border/60">
               <PackageIcon className="size-4 text-primary" />
-              <span>Workshop Inventory & Fulfillment</span>
+              <span>Workshop Inventory &amp; Fulfillment</span>
             </h2>
 
             <div className="space-y-4">
@@ -613,7 +1132,7 @@ function EditProductForm() {
                 </span>
               </label>
 
-              {trackInventory && (
+              {trackInventory && !showVariants && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
                   <div>
                     <label className="block text-xs font-medium text-foreground mb-1">
@@ -651,99 +1170,94 @@ function EditProductForm() {
             </div>
           </div>
 
-          {/* Section 4: Imagery & Workshop Photos */}
+          {/* Section 7: Imagery & Gallery */}
           <div className="p-5 bg-background border border-border/80 shadow-xs space-y-4">
             <h2 className="text-sm font-semibold text-foreground flex items-center gap-2 pb-2 border-b border-border/60">
               <ImageIcon className="size-4 text-primary" />
-              <span>Product Photography & Gallery</span>
+              <span>Media &amp; Gallery Showcase</span>
             </h2>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div className="flex gap-2">
                 <input
                   type="url"
                   value={imageUrl}
                   onChange={(e) => setImageUrl(e.target.value)}
-                  placeholder="https://... image URL (CDN, Unsplash, or Cloudinary)"
+                  placeholder="Paste direct HTTPS image URL..."
                   className="flex-1 h-9 px-3 text-xs bg-background border border-border rounded-none focus:outline-none focus:ring-1 focus:ring-primary"
                 />
                 <Button
                   type="button"
-                  onClick={handleAddImage}
                   variant="outline"
-                  className="h-9 px-3 text-xs rounded-none border-border shrink-0"
+                  onClick={handleAddImage}
+                  size="sm"
+                  className="h-9 px-4 text-xs rounded-none border-border"
                 >
                   <PlusIcon className="size-3.5 mr-1" />
                   <span>Add URL</span>
                 </Button>
               </div>
 
-              {/* Photos Grid */}
-              {images.length === 0 ? (
-                <div className="p-8 border border-dashed border-border/80 text-center text-xs text-muted-foreground bg-muted/10">
-                  <ImageIcon className="size-8 mx-auto text-muted-foreground/40 mb-2" />
-                  <p className="font-medium text-foreground">No images in gallery</p>
-                  <p className="text-[11px] mt-0.5">
-                    Add a photo URL above to display images in your storefront listing.
-                  </p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+              {images.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {images.map((img, idx) => (
                     <div
                       key={idx}
-                      className={`relative group border ${
-                        img.isPrimary ? "border-primary ring-1 ring-primary" : "border-border"
-                      } bg-muted/20 aspect-square flex flex-col justify-between overflow-hidden`}
+                      className={`group relative aspect-square border overflow-hidden rounded-none ${img.isPrimary ? "border-primary ring-2 ring-primary/20" : "border-border"
+                        }`}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={img.url}
-                        alt={img.altText || `Product image ${idx + 1}`}
+                        alt={img.altText || `Image ${idx + 1}`}
                         className="size-full object-cover"
                       />
 
                       {/* Primary Badge */}
                       {img.isPrimary && (
-                        <span className="absolute top-1 left-1 bg-brand-deep-forest text-white text-[9px] font-semibold px-1.5 py-0.5 tracking-wider uppercase">
-                          Primary
+                        <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 bg-brand-deep-forest text-white text-[9px] font-semibold uppercase tracking-wider rounded-none">
+                          Cover
                         </span>
                       )}
 
-                      {/* Hover Overlay Controls */}
-                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-2">
+                      {/* Hover Controls */}
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2">
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImage(idx)}
+                          className="self-end p-1 rounded bg-rose-600 text-white hover:bg-rose-700 transition-colors"
+                          title="Remove image"
+                        >
+                          <TrashIcon className="size-3" />
+                        </button>
                         {!img.isPrimary && (
                           <button
                             type="button"
                             onClick={() => handleSetPrimary(idx)}
-                            className="px-2 py-1 bg-white text-black text-[10px] font-medium hover:bg-neutral-100"
+                            className="py-1 px-2 bg-white text-black text-[10px] font-semibold uppercase tracking-wider rounded-none hover:bg-gray-100"
                           >
-                            Make Cover
+                            Set as Cover
                           </button>
                         )}
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveImage(idx)}
-                          className="p-1.5 bg-rose-600 text-white hover:bg-rose-700"
-                          title="Delete photo"
-                        >
-                          <TrashIcon className="size-3.5" />
-                        </button>
                       </div>
                     </div>
                   ))}
                 </div>
+              ) : (
+                <p className="text-xs text-muted-foreground italic">
+                  No images uploaded yet. Add high-resolution photos of your item.
+                </p>
               )}
             </div>
           </div>
         </div>
 
-        {/* Right Column: Real-Time Earnings Calculator (1 Col Sticky) */}
+        {/* Right Column: Earnings Summary Sticky */}
         <div className="space-y-6">
-          <div className="p-5 bg-background border border-border/80 shadow-xs rounded-none sticky top-20 space-y-4">
+          <div className="p-5 bg-background border border-border/80 shadow-xs space-y-4 sticky top-6">
             <h2 className="text-sm font-semibold text-foreground flex items-center gap-2 pb-2 border-b border-border/60">
               <SparkleIcon className="size-4 text-emerald-600" weight="fill" />
-              <span>Earnings & Payout Engine</span>
+              <span>Earnings Engine (ALV &amp; Payout)</span>
             </h2>
 
             <div className="space-y-3 text-xs">
@@ -756,7 +1270,7 @@ function EditProductForm() {
 
               <div className="flex items-center justify-between text-muted-foreground">
                 <span>
-                  Estimated Finnish VAT ({vatRate}%)
+                  Estimated Finnish ALV ({vatRate}%)
                   <span className="block text-[10px] text-muted-foreground/75">
                     {vatIncluded ? "(Included in price)" : "(Added at checkout)"}
                   </span>
@@ -774,7 +1288,7 @@ function EditProductForm() {
               </div>
 
               <div className="flex items-center justify-between text-muted-foreground">
-                <span>Oivaly Platform Fee ({env.platformCommissionPercent}%)</span>
+                <span>Oivaly Commission ({(commissionRate * 100).toFixed(0)}%)</span>
                 <span className="font-mono text-destructive">
                   -€{platformFee.toFixed(2)}
                 </span>
@@ -786,7 +1300,7 @@ function EditProductForm() {
                     Seller Net Payout
                   </span>
                   <span className="text-[10px] text-muted-foreground">
-                    What you actually receive into your bank account
+                    Remitted after order fulfillment
                   </span>
                 </div>
                 <span className="text-lg font-bold font-mono text-emerald-700 dark:text-emerald-300">
@@ -795,67 +1309,35 @@ function EditProductForm() {
               </div>
             </div>
 
-            {/* Guarantee Box */}
-            <div className="mt-4 p-3 bg-muted/40 border border-border/60 rounded-none text-[11px] text-muted-foreground space-y-1.5">
-              <div className="flex items-start gap-2">
-                <InfoIcon className="size-3.5 text-primary shrink-0 mt-0.5" />
-                <p>
-                  Funds are secured on Oivaly and automatically disbursed to your verified bank account after order fulfillment.
-                </p>
-              </div>
-            </div>
-
-            {/* Bottom Form Actions */}
-            <div className="pt-3 space-y-2">
+            <div className="pt-2 border-t border-border/60 space-y-2">
               <Button
                 type="button"
                 disabled={isSubmitting}
                 onClick={() => handleSave(false)}
-                className="w-full h-11 bg-brand-deep-forest hover:bg-brand-deep-forest/90 text-white rounded-none uppercase text-xs font-semibold tracking-wider shadow-xs"
+                className="w-full h-10 bg-brand-deep-forest hover:bg-brand-deep-forest/90 text-white rounded-none uppercase text-xs font-semibold tracking-wider"
               >
                 {isSubmitting ? (
                   <span>Saving...</span>
                 ) : (
                   <span className="flex items-center justify-center gap-1.5">
-                    <FloppyDiskIcon className="size-3.5" weight="bold" />
+                    <FloppyDiskIcon className="size-4" />
                     <span>Save Changes</span>
                   </span>
                 )}
               </Button>
 
-              {(currentStatus === "DRAFT" || currentStatus === "REJECTED") && (
+              {currentStatus !== "PUBLISHED" && currentStatus !== "PENDING_REVIEW" && currentStatus !== "SUBMITTED" && (
                 <Button
                   type="button"
                   variant="outline"
                   disabled={isSubmitting}
                   onClick={() => handleSave(true)}
-                  className="w-full h-9 text-xs rounded-none border-border font-semibold"
+                  className="w-full h-9 text-xs rounded-none border-border"
                 >
-                  <PaperPlaneTiltIcon className="size-3.5 mr-1.5 text-primary" />
+                  <PaperPlaneTiltIcon className="size-3.5 mr-1.5" />
                   <span>Submit for Review</span>
                 </Button>
               )}
-
-              {isPublished && (
-                <Button
-                  asChild
-                  variant="outline"
-                  className="w-full h-9 text-xs rounded-none border-border"
-                >
-                  <Link
-                    href={`/products/${originalProduct.slug || originalProduct.id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <ArrowSquareOutIcon className="size-3.5 mr-1.5 text-primary" />
-                    <span>View in Storefront</span>
-                  </Link>
-                </Button>
-              )}
-
-              <p className="text-[10px] text-muted-foreground text-center pt-1 leading-tight">
-                All seller listings are reviewed and published by a Platform Administrator before becoming visible on the marketplace.
-              </p>
             </div>
           </div>
         </div>
@@ -865,16 +1347,5 @@ function EditProductForm() {
 }
 
 export default function EditProductPage() {
-  return (
-    <React.Suspense
-      fallback={
-        <div className="py-24 text-center text-xs text-muted-foreground space-y-3">
-          <div className="size-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin mx-auto" />
-          <p className="font-medium text-foreground">Loading listing details from database...</p>
-        </div>
-      }
-    >
-      <EditProductForm />
-    </React.Suspense>
-  );
+  return <EditProductForm />;
 }

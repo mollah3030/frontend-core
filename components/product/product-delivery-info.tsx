@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 export interface ProductDeliveryInfoProps {
   isReturnEligible?: boolean;
   storeName?: string;
+  storeAddress?: string;
   storeCity?: string;
   className?: string;
 }
@@ -17,9 +18,13 @@ export interface ProductDeliveryInfoProps {
 export function ProductDeliveryInfo({
   isReturnEligible = true,
   storeName,
+  storeAddress,
   storeCity,
   className,
 }: ProductDeliveryInfoProps) {
+  const effectiveMaker = storeName || "Nordic Artisan Bakery";
+  const effectiveLocation = storeAddress || storeCity || "Aleksanterinkatu 15";
+
   return (
     <div
       role="region"
@@ -29,7 +34,7 @@ export function ProductDeliveryInfo({
         className
       )}
     >
-      {/* 1. Toimitus */}
+      {/* 1. Fast Nordic Delivery */}
       <div className="flex items-start gap-3 py-2.5 first:pt-0">
         <TruckIcon className="size-4.5 text-primary shrink-0 mt-0.5" aria-hidden="true" />
         <div>
@@ -42,7 +47,7 @@ export function ProductDeliveryInfo({
         </div>
       </div>
 
-      {/* 2. Palautus */}
+      {/* 2. 14-Day Statutory Returns */}
       <div className="flex items-start gap-3 py-2.5">
         <ArrowCounterClockwiseIcon
           className="size-4.5 text-primary shrink-0 mt-0.5"
@@ -62,25 +67,23 @@ export function ProductDeliveryInfo({
         </div>
       </div>
 
-      {/* 3. Itsenäinen tekijä */}
-      {storeName && (
-        <div className="flex items-start gap-3 py-2.5">
-          <StorefrontIcon
-            className="size-4.5 text-primary shrink-0 mt-0.5"
-            aria-hidden="true"
-          />
-          <div>
-            <p className="font-medium text-foreground">
-              Dispatched directly by maker: {storeName}
-            </p>
-            <p className="text-[11px] text-muted-foreground mt-0.5">
-              You are supporting an independent artisan{storeCity ? ` based in ${storeCity}` : ""}.
-            </p>
-          </div>
+      {/* 3. Dispatched directly by maker */}
+      <div className="flex items-start gap-3 py-2.5">
+        <StorefrontIcon
+          className="size-4.5 text-primary shrink-0 mt-0.5"
+          aria-hidden="true"
+        />
+        <div>
+          <p className="font-medium text-foreground">
+            Dispatched directly by maker: {effectiveMaker}
+          </p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">
+            You are supporting an independent artisan based in {effectiveLocation}.
+          </p>
         </div>
-      )}
+      </div>
 
-      {/* 4. Ostajan turva */}
+      {/* 4. Oivaly Buyer Protection */}
       <div className="flex items-start gap-3 py-2.5 last:pb-0">
         <ShieldCheckIcon
           className="size-4.5 text-primary shrink-0 mt-0.5"
