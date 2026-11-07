@@ -1346,6 +1346,19 @@ function EditProductForm() {
   );
 }
 
+function EditProductFallback() {
+  return (
+    <div className="py-24 text-center text-xs text-muted-foreground space-y-3">
+      <div className="size-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin mx-auto" />
+      <p className="font-medium text-foreground">Loading listing editor...</p>
+    </div>
+  );
+}
+
 export default function EditProductPage() {
-  return <EditProductForm />;
+  return (
+    <React.Suspense fallback={<EditProductFallback />}>
+      <EditProductForm />
+    </React.Suspense>
+  );
 }

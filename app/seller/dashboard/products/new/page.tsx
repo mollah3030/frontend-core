@@ -363,24 +363,24 @@ export default function NewProductPage() {
       const effectiveVariants =
         showVariants && variants.length > 0
           ? variants.map((v, idx) => ({
-              size: v.size?.trim() || undefined,
-              color: v.color?.trim() || undefined,
-              model: v.model?.trim() || v.size?.trim() || undefined,
-              attributeKey: v.attributeKey?.trim() || (v.size ? "Size/Set" : undefined),
-              attributeValue: v.attributeValue?.trim() || v.size?.trim() || undefined,
-              sku: v.sku?.trim() || (sku ? `${sku}-${idx + 1}` : undefined),
-              price: v.price !== undefined ? Number(v.price) : numPrice,
-              stockQuantity: Number(v.stockQuantity) || 0,
-              lowStockThreshold: Number(v.lowStockThreshold) || lowStockThreshold,
-            }))
+            size: v.size?.trim() || undefined,
+            color: v.color?.trim() || undefined,
+            model: v.model?.trim() || v.size?.trim() || undefined,
+            attributeKey: v.attributeKey?.trim() || (v.size ? "Size/Set" : undefined),
+            attributeValue: v.attributeValue?.trim() || v.size?.trim() || undefined,
+            sku: v.sku?.trim() || (sku ? `${sku}-${idx + 1}` : undefined),
+            price: v.price !== undefined ? Number(v.price) : numPrice,
+            stockQuantity: Number(v.stockQuantity) || 0,
+            lowStockThreshold: Number(v.lowStockThreshold) || lowStockThreshold,
+          }))
           : [
-              {
-                sku: sku.trim() || undefined,
-                price: numPrice,
-                stockQuantity: stockQuantity,
-                lowStockThreshold: lowStockThreshold,
-              },
-            ];
+            {
+              sku: sku.trim() || undefined,
+              price: numPrice,
+              stockQuantity: stockQuantity,
+              lowStockThreshold: lowStockThreshold,
+            },
+          ];
 
       const created = await sellerDashboardApi.createProduct(
         {
@@ -443,7 +443,7 @@ export default function NewProductPage() {
               Create New Product Listing
             </h1>
             <p className="text-xs text-muted-foreground">
-              Define pricing, Finnish VAT rates, selectable options (Etsy style), and craftsmanship specifications.
+              Define pricing, Finnish VAT rates, selectable options, and craftsmanship specifications.
             </p>
           </div>
         </div>
@@ -628,7 +628,7 @@ export default function NewProductPage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-border/60">
               <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
                 <SlidersHorizontalIcon className="size-4 text-primary" weight="bold" />
-                <span>Selectable Options &amp; Variants (Etsy Style)</span>
+                <span>Selectable Options &amp; Variants </span>
               </h2>
 
               <label className="flex items-center gap-2 cursor-pointer select-none">
@@ -841,7 +841,7 @@ export default function NewProductPage() {
             <div className="flex items-center justify-between pb-2 border-b border-border/60">
               <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
                 <PencilSimpleLineIcon className="size-4 text-primary" weight="bold" />
-                <span>Buyer Personalization (Etsy Style)</span>
+                <span>Buyer Personalization </span>
               </h2>
 
               <label className="flex items-center gap-2 cursor-pointer select-none">
@@ -960,9 +960,8 @@ export default function NewProductPage() {
               {images.map((img, idx) => (
                 <div
                   key={idx}
-                  className={`group relative aspect-square border overflow-hidden rounded-none ${
-                    img.isPrimary ? "border-primary ring-2 ring-primary/20" : "border-border"
-                  }`}
+                  className={`group relative aspect-square border overflow-hidden rounded-none ${img.isPrimary ? "border-primary ring-2 ring-primary/20" : "border-border"
+                    }`}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
